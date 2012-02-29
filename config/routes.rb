@@ -1,4 +1,7 @@
 Routemap::Application.routes.draw do
+  root to: "tracks#index" 
+  resources :tracks
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

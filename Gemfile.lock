@@ -30,6 +30,7 @@ GEM
       multi_json (~> 1.0)
     arel (3.0.2)
     builder (3.0.0)
+    cocaine (0.2.1)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -54,6 +55,12 @@ GEM
     mime-types (1.17.2)
     multi_json (1.1.0)
     mysql2 (0.3.11)
+    nokogiri (1.5.0)
+    paperclip (2.7.0)
+      activerecord (>= 2.3.0)
+      activesupport (>= 2.3.2)
+      cocaine (>= 0.0.2)
+      mime-types
     pg (0.13.2)
     polyglot (0.3.3)
     rack (1.4.1)
@@ -107,6 +114,8 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   jquery-rails
   mysql2
+  nokogiri
+  paperclip
   pg
   rails (= 3.2.1)
   sass-rails (~> 3.2.3)

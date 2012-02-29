@@ -1,0 +1,8 @@
+<%= javascript 'http://maps.googleapis.com/maps/api/js?sensor=false', track_path(@track, format: :js), 'map.js' %>
+<p id="notice"><%= notice %></p>
+<h3><%= @track.name %></h3>
+
+<div id="map"></div>
+
+<%= link_to 'Edit', edit_track_path(@track) %> |
+<%= link_to 'Back', tracks_path %>

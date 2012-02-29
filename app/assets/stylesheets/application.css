@@ -11,3 +11,8 @@
  *= require_self
  *= require_tree .
 */
+
+#map {
+  width: 100%px;
+  height: 600px;
+}
