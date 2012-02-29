@@ -2,7 +2,7 @@ class Track < ActiveRecord::Base
 
   attr_accessible :name, :attachment
 
-  has_attached_file :attachment, url: "/system/tracks/:id/attachment/:basename.:extension"
+  has_attached_file :attachment
 
   validates_presence_of :name, :attachment_file_name
 
