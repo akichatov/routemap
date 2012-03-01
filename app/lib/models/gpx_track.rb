@@ -1,5 +1,5 @@
 class GpxTrack
-  attr_reader :min_max, :points
+  attr_reader :min, :max, :points
 
   def self.parse(gpx_file)
     points = []
@@ -18,7 +18,8 @@ private
     @points = points
     lats = @points.map{|p| p[:lat]}
     lons = @points.map{|p| p[:lon]}
-    @min_max = {min: {lat: lats.min, lon: lons.min}, max: {lat: lats.max, lon: lons.max}}
+    @min = {lat: lats.min, lon: lons.min}
+    @max = {lat: lats.max, lon: lons.max}
   end
 
 end

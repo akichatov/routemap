@@ -1,11 +1,8 @@
 var Map = function() {
-  var latCenter = (track.min_max.max.lat + track.min_max.min.lat) / 2;
-  var lonCenter = (track.min_max.max.lon + track.min_max.min.lon) / 2;
   this.options = {
-      zoom: 11,
-      center: new google.maps.LatLng(latCenter, lonCenter),
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    }
+    center: this.getBounds().getCenter(),
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
   this.map = new google.maps.Map($("#map").get(0), this.options);
   var path = [];
   for(var i = 0; i < track.points.length; i++) {
@@ -19,6 +16,14 @@ var Map = function() {
     strokeWeight: 2
   });
   line.setMap(this.map);
+  this.map.fitBounds(this.getBounds());
+};
+
+Map.prototype.getBounds = function() {
+  var bounds = new google.maps.LatLngBounds();
+  bounds.extend(new google.maps.LatLng(track.min.lat, track.min.lon));
+  bounds.extend(new google.maps.LatLng(track.max.lat, track.max.lon));
+  return bounds;
 };
 
 $(function() {
