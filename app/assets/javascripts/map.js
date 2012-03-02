@@ -28,4 +28,6 @@ Map.prototype.getBounds = function() {
 
 $(function() {
   new Map();
+  $("#hdistance").html(track.hdistance.toFixed(2))
+  $("#htdistance").html(track.htdistance.toFixed(2))
 });

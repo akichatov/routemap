@@ -1,8 +1,21 @@
-<%= javascript 'http://maps.googleapis.com/maps/api/js?key=AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s&sensor=false', track_path(@track, format: :js), 'map.js' %>
+<%= javascript 'http://maps.googleapis.com/maps/api/js?key=AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s&sensor=false' %>
+<%= javascript track_path(@track, format: :js), 'map.js' %>
+
 <p id="notice"><%= notice %></p>
+
 <h3><%= @track.name %></h3>
 
 <div id="map"></div>
+<table id="track_statistic">
+  <tr>
+    <th>Distance:</th>
+    <td><span id="hdistance"></span> km</td>
+  </tr>
+  <tr>
+    <th>Distance Total:</th>
+    <td><span id="htdistance"></span> km</td>
+  </tr>
+</table>
 
 <%= link_to 'Edit', edit_track_path(@track) %> |
 <%= link_to 'Back', tracks_path %>

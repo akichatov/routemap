@@ -13,16 +13,6 @@ class TracksController < ApplicationController
     end
   end
 
-  # GET /tracks/1
-  # GET /tracks/1.json
-  def show
-    respond_to do |format|
-      format.html # show.html.erb
-      format.js
-      format.json { render json: GpxTrack.parse(@track.attachment.to_file) }
-    end
-  end
-
   # GET /tracks/new
   # GET /tracks/new.json
   def new

@@ -1,5 +1,6 @@
 class GpxTrack
-  attr_reader :min, :max, :points
+  UNIT_FACTOR = { meters: 1.0, kms: 0.001 }
+  attr_reader :min, :max, :points, :hdistance, :htdistance
 
   def self.parse(gpx_file)
     points = []
@@ -12,6 +13,17 @@ class GpxTrack
     GpxTrack.new(points)
   end
 
+  def distance_haversine(options={})
+    current = @points.first
+    result = 0.0
+    @points.each do |point|
+      result += Geo.distance(current[:lat], current[:lon], point[:lat], point[:lon],
+        current[:ele], point[:ele], options[:total] ? 1 : 0)
+      current = point
+    end
+    result * UNIT_FACTOR[options[:units] || :meters]
+  end
+
 private
 
   def initialize(points)
@@ -20,6 +32,9 @@ private
     lons = @points.map{|p| p[:lon]}
     @min = {lat: lats.min, lon: lons.min}
     @max = {lat: lats.max, lon: lons.max}
+    @hdistance = distance_haversine(units: :kms)
+    @htdistance = distance_haversine(units: :kms, total: true)
   end
+
 
 end
