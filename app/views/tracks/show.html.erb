@@ -1,21 +1,67 @@
 <%= javascript 'http://maps.googleapis.com/maps/api/js?key=AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s&sensor=false' %>
-<%= javascript track_path(@track, format: :js), 'map.js' %>
+<%= javascript track_path(@track, format: :js), 'elevator.js', 'map.js' %>
 
 <p id="notice"><%= notice %></p>
 
-<h3><%= @track.name %></h3>
-
+<div id="info">
+  <h3><%= @track.name %></h3>
+  <table id="track_statistic">
+    <tr>
+      <th>Distance:</th>
+      <td><span id="hdistance"></span> m</td>
+    </tr>
+    <tr>
+      <th>Distance Total:</th>
+      <td><span id="htdistance"></span> m</td>
+    </tr>
+    <tr>
+      <th>Altitude min:</th>
+      <td><span id="ele_min"></span> m</td>
+    </tr>
+    <tr>
+      <th>Altitude max:</th>
+      <td><span id="ele_max"></span> m</td>
+    </tr>
+    <tr>
+      <th>Climb:</th>
+      <td><span id="climb"></span> m</td>
+    </tr>
+    <tr>
+      <th>Descent:</th>
+      <td><span id="descent"></span> m</td>
+    </tr>
+    <tr>
+      <th colspan='2'>Point data:</th>
+    </tr>
+    <tr>
+      <th>Time:</th>
+      <td><span id="time"></span></td>
+    </tr>
+    <tr>
+      <th>Elevation:</th>
+      <td><span id="pointEle"></span> m</td>
+    </tr>
+    <tr>
+      <th>Speed:</th>
+      <td><span id="pointSpeed"></span> km/h</td>
+    </tr>
+    <tr>
+      <th rowspan='2'>Distance:</th>
+      <td><span id="pointMeters"></span> m</td>
+    </tr>
+    <tr>
+      <td><span id="pointKms"></span> km</td>
+    </tr>
+    <tr>
+      <th>Follow Map:</th>
+      <td><input type="checkbox" id="followMap" /></td>
+    </tr>
+  </table>  
+</div>
 <div id="map"></div>
-<table id="track_statistic">
-  <tr>
-    <th>Distance:</th>
-    <td><span id="hdistance"></span> km</td>
-  </tr>
-  <tr>
-    <th>Distance Total:</th>
-    <td><span id="htdistance"></span> km</td>
-  </tr>
-</table>
-
+<div style="clear: both;"></div>
+<div id="elevation">
+  <canvas id="canvasElement"></canvas>
+</div>
 <%= link_to 'Edit', edit_track_path(@track) %> |
 <%= link_to 'Back', tracks_path %>
