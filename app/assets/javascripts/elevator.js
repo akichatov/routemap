@@ -1,18 +1,15 @@
 function Elevator() {
   this.width = $("#elevation").innerWidth() - 20;
   this.height = 200;
-  this.paddingY = 20;
-  this.paddingX = 10;
-  this.paddingChartY = 10
-  $("#canvasElement").attr('width', this.width - this.paddingX);
+  this.padding = {top: 20, right: 30, bottom: 10, left: 10};
+  $("#canvasElement").attr('width', this.width);
   $("#canvasElement").attr('height', this.height);
   this.canvas = $("#canvasElement").get(0);
   this.context = this.canvas.getContext('2d');
   this.canvas.onmousemove = $.proxy(this.mouseMove, this);
   this.canvas.onmouseout = $.proxy(this.mouseOut, this);
-  this.visibleWidth = this.width - this.paddingX * 2;
-  this.visibleHeight = this.height - this.paddingY * 2;
-  this.chartHeight = this.visibleHeight - this.paddingChartY;
+  this.visibleWidth = this.width - this.padding.left - this.padding.right;
+  this.visibleHeight = this.height - this.padding.top - this.padding.bottom;
   this.drawAxis();
   this.counter = 0;
 }
@@ -34,7 +31,7 @@ Elevator.prototype.normalize = function(data) {
   }
   var diffY = this.maxY - this.minY;
   this.factorX = this.maxX / this.visibleWidth;
-  this.factorY = this.chartHeight / (diffY == 0 ? 1 : diffY);
+  this.factorY = this.visibleHeight / (diffY == 0 ? 1 : diffY);
   this.offsetY = this.minY < 0 ? 0 - Math.round(this.minY * this.factorY) : 0;
   // this.offsetX = this.minX < 0 ? 0 - Math.round(this.minX * this.factorX) : 0;
   var result = [];
@@ -56,8 +53,8 @@ Elevator.prototype.getIntermediations = function(p1, p2, factor) {
 }
 
 Elevator.prototype.getScreenPoint = function(original) {
-  var x = Math.round(original.first() / this.factorX + this.paddingX);
-  var y = this.chartHeight - Math.round(original.last() * this.factorY + this.offsetY) + this.paddingY + this.paddingChartY;
+  var x = Math.ceil(original.first() / this.factorX + this.padding.left);
+  var y = this.visibleHeight - Math.round(original.last() * this.factorY + this.offsetY) + this.padding.top;
   return new Datum([x, y]);
 }
 
@@ -68,16 +65,16 @@ Elevator.prototype.mouseMove = function(event) {
   // }
   var offset = $(this.canvas).offset();
   var x = event.clientX - offset.left;
-  x = x > this.paddingX ? x : this.paddingX;
-  x = x < (this.width - this.paddingX) ? x : (this.width - this.paddingX);
+  x = x >= this.padding.left ? x : this.padding.left;
+  x = x <= (this.width - this.padding.right) ? x : (this.width + this.padding.right) + 1;
   this.draw();
   this.context.beginPath();
-  this.context.moveTo(x, this.paddingY);
-  this.context.lineTo(x, this.height - this.paddingY);
+  this.context.moveTo(x, this.padding.top - 3);
+  this.context.lineTo(x, this.height - 1);
   this.context.stroke();
   var datum = this.screenPositions[x];
   if(datum) {
-    this.context.fillText(this.getLabel(datum), x, this.paddingY);
+    this.context.fillText(this.getLabel(datum), x, this.padding.top - 5);
     $(document).trigger("elevation:over", datum);
   }
 };
@@ -94,7 +91,7 @@ Elevator.prototype.getLabel = function(datum) {
 };
 
 Elevator.prototype.clear = function() {
-  this.context.clearRect(this.paddingX - 1, 0, this.visibleWidth + this.paddingX + 2, this.visibleHeight + this.paddingY + 2);
+  this.context.clearRect(1, 0, this.width, this.height - 1);
 };
 
 Elevator.prototype.draw = function() {
@@ -126,9 +123,9 @@ Elevator.prototype.getSampleData = function() {
 
 Elevator.prototype.drawAxis = function() {
   this.context.beginPath();
-  this.context.moveTo(this.paddingX - 2, this.paddingY - 2);
-  this.context.lineTo(this.paddingX - 2, this.height - this.paddingY + 2);
-  this.context.lineTo(this.width - this.paddingX + 2, this.height - this.paddingY + 2);
+  this.context.moveTo(0, 0);
+  this.context.lineTo(0, this.height);
+  this.context.lineTo(this.width, this.height);
   this.context.stroke();
 }
 
@@ -146,11 +143,7 @@ Elevator.prototype.drawGraph = function(data) {
       datum.screen.first(),
       datum.screen.last()
     );
-    var screenPosition = this.screenPositions[datum.screen.first()];
-    if(!screenPosition || screenPosition.last() < datum.original.last()) {
-      // console.log(datum.screen.first())
-      this.screenPositions[datum.screen.first()] = datum.original;
-    }
+    this.screenPositions[datum.screen.first()] = datum.original;
     previous = datum;
   }
   this.context.stroke();

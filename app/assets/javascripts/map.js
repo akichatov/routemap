@@ -14,8 +14,9 @@ var Map = function() {
   for(var i = 0; i < track.points.length; i++) {
     var point = track.points[i];
     point.time = new Date(Date.parse(point.time)).toUTCString();
+    point.latLng = new google.maps.LatLng(point.lat, point.lon);
     normalized.push(point);
-    path.push(new google.maps.LatLng(point.lat, point.lon));
+    path.push(point.latLng);
     var next = track.points[i + 1];
     if(next && next.dist / this.metersPerPixel > 1) {
       normalized = normalized.concat(this.getIntermediations(point, next));
@@ -24,20 +25,19 @@ var Map = function() {
   var dist = 0.0;
   for(var i = 0; i < normalized.length; i++) {
     var point = normalized[i];
-    var latLng = new google.maps.LatLng(point['lat'], point['lon']);
     var marker = new google.maps.Marker({
-      position: latLng,
+      position: point.latLng,
       map: this.map,
       title: "Alt:" + point['ele'],
       visible: false,
       flat: true
     });
-    var elevationDatum = new Datum([dist + point.dist, point.ele]);
+    dist += (point.new_dist || point.dist);
+    var elevationDatum = new Datum([dist, point.ele]);
     elevationDatum.index = i;
     elevationDatum.generated = point.generated;
     this.elevationPoints.push(elevationDatum);
-    this.data.push({point: point, latLng: latLng, marker: marker, elevationDatum: elevationDatum, totalDist: dist});
-    dist += point.dist;
+    this.data.push({point: point, marker: marker, elevationDatum: elevationDatum});
   }
   var line = new google.maps.Polyline({
     path: path,
@@ -54,20 +54,25 @@ var Map = function() {
 
 Map.prototype.getIntermediations = function(p1, p2) {
   var result = [];
-  var count = Math.ceil(p2.dist / this.metersPerPixel);
-  for(var i = 1; i < count; i++) {
-    var next = {
-      dist: p2.dist / count,
-      ele: p1.ele + i * (p2.ele - p1.ele) / count,
-      lon: p1.lon + i * (p2.lon - p1.lon) / count,
-      lat: p1.lat + i * (p2.lat - p1.lat) / count,
-      time: new Date(Date.parse(p1.time) + i * (Date.parse(p2.time) - Date.parse(p1.time)) / count).toUTCString(),
-      generated: true
-    };
-    // console.log('next',next.dist)
-    result.push(next);
+  var count = Math.round(p2.dist / this.metersPerPixel);
+  if(count > 1) {
+    var dist = p2.dist / count;
+    p2.new_dist = dist;
+    for(var i = 1; i < count; i++) {
+      var lat = p1.lat + i * (p2.lat - p1.lat) / count;
+      var lon = p1.lon + i * (p2.lon - p1.lon) / count;
+      var next = {
+        dist: dist,
+        ele: p1.ele + i * (p2.ele - p1.ele) / count,
+        lat: lat,
+        lon: lon,
+        time: new Date(Date.parse(p1.time) + i * (Date.parse(p2.time) - Date.parse(p1.time)) / count).toUTCString(),
+        latLng: new google.maps.LatLng(lat, lon),
+        generated: true
+      };
+      result.push(next);
+    }
   }
-  p2.dist = p2.dist / count;
   return result;
 }
 
@@ -75,13 +80,13 @@ Map.prototype.elevationOver = function(event, datum) {
   if(this.visibleMarker) {
     this.visibleMarker.setVisible(false);
   }
-  if(datum && datum.index) {
+  if(datum && datum.index != null) {
     this.visibleMarker = this.data[datum.index].marker;
     this.visibleMarker.setVisible(true);
     $("#time").html(this.data[datum.index].point.time);
     $("#pointEle").html(this.data[datum.index].point.ele.toFixed(2));
-    $("#pointMeters").html(this.data[datum.index].totalDist.toFixed(2));
-    $("#pointKms").html((this.data[datum.index].totalDist / 1000).toFixed(2));
+    $("#pointMeters").html(this.data[datum.index].elevationDatum.first().toFixed(2));
+    $("#pointKms").html((this.data[datum.index].elevationDatum.first() / 1000).toFixed(2));
     var speed = this.getSpeed(datum.index);
     if(speed != null) {
       $("#pointSpeed").html(speed);
@@ -123,8 +128,8 @@ Map.prototype.getBounds = function() {
 
 $(function() {
   new Map();
-  $("#hdistance").html(track.hdistance.toFixed(2));
-  $("#htdistance").html(track.htdistance.toFixed(2));
+  $("#distance_m").html(track.distance.toFixed(2));
+  $("#distance_km").html((track.distance / 1000).toFixed(2));
   $("#ele_min").html(track.min.ele);
   $("#ele_max").html(track.max.ele);
   $("#climb").html(track.climb.toFixed(2));
