@@ -13,6 +13,7 @@
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp
+.DS_Store
 **/.DS_Store
 /public/system/**/*
 /lib/inline/**/*

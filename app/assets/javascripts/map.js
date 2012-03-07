@@ -1,6 +1,11 @@
 var Map = function() {
-  this.gmap = new GMap();
-  this.ymap = new YMap();
+  this.options = {
+    strokeColor: 'FF0000',
+    strokeOpacity: 0.6,
+    strokeWeight: 3
+  };
+  this.gmap = new GMap(this.options);
+  this.ymap = new YMap(this.options);
   this.currentMap = this.gmap;
   this.elevator = new Elevator();
   this.metersPerPixel = Map.track.distance / this.elevator.visibleWidth;

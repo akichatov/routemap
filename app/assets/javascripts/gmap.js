@@ -1,14 +1,15 @@
-var GMap = function() {
-  this.options = {
+var GMap = function(options) {
+  this.options = options;
+  this.mapOptions = {
     center: this.getBounds().getCenter(),
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
-  this.gmap = new google.maps.Map($("#gmap").get(0), this.options);
+  this.gmap = new google.maps.Map($("#gmap").get(0), this.mapOptions);
   this.line = new google.maps.Polyline({
     path: new google.maps.MVCArray(),
-    strokeColor: "#FF0000",
-    strokeOpacity: 1.0,
-    strokeWeight: 2
+    strokeColor: this.options.strokeColor,
+    strokeOpacity: this.options.strokeOpacity,
+    strokeWeight: this.options.strokeWeight
   });
 };
 

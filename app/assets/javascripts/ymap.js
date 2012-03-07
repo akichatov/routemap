@@ -1,4 +1,5 @@
-var YMap = function() {
+var YMap = function(options) {
+  this.options = options;
   this.points = [];
   this.ypoints = [];
 };
@@ -26,8 +27,8 @@ YMap.prototype.doInit = function() {
 
   var s = new YMaps.Style();
   s.lineStyle = new YMaps.LineStyle();
-  s.lineStyle.strokeColor = 'FF0000';
-  s.lineStyle.strokeWidth = '2';
+  s.lineStyle.strokeColor = this.options.strokeColor + (255 * this.options.strokeOpacity).toString(16);
+  s.lineStyle.strokeWidth = this.options.strokeWeight.toString();
   YMaps.Styles.add("map#line", s);
 
   this.line = new YMaps.Polyline(this.ypoints);

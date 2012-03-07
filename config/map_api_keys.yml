@@ -1,11 +1,12 @@
 development:
   google: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s
-  yandex: AAZwVk8BAAAAjdWuGAIALfCeiwIbPDq1UucQL3klTOgvi-sAAAAAAAAAAABkE43wYyhvATwlkLSY1JdQjyC33w==
+  # yandex: AAZwVk8BAAAAjdWuGAIALfCeiwIbPDq1UucQL3klTOgvi-sAAAAAAAAAAABkE43wYyhvATwlkLSY1JdQjyC33w== #lvh.me
+  yandex: AEzBVk8BAAAAHGzhEQMAL_kWUSrL4qCZZlKsP4-8p48dMPAAAAAAAAAAAACzXu6KbKRc2Et6uPdX212giBQMJg==   #aak.ath.cx
 
 test:
   google: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s
-  yandex: AAZwVk8BAAAAjdWuGAIALfCeiwIbPDq1UucQL3klTOgvi-sAAAAAAAAAAABkE43wYyhvATwlkLSY1JdQjyC33w==
+  yandex: AAZwVk8BAAAAjdWuGAIALfCeiwIbPDq1UucQL3klTOgvi-sAAAAAAAAAAABkE43wYyhvATwlkLSY1JdQjyC33w==  #lvh.me
 
 production:
   google: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s
-  yandex: AH3BVk8BAAAAonK2WQMA0_l3xSDXKo1Ln3BALzIdspDCNZYAAAAAAAAAAAAey2_3d2OBs7fvIGW12Ci47gIigg==
+  yandex: AH3BVk8BAAAAonK2WQMA0_l3xSDXKo1Ln3BALzIdspDCNZYAAAAAAAAAAAAey2_3d2OBs7fvIGW12Ci47gIigg== # routemap.herokuapp.com
