@@ -1,4 +1,6 @@
 function Elevator() {
+  this.data = [];
+  this.visiblePoints = [];
   this.width = $("#elevation").innerWidth() - 20;
   this.height = 200;
   this.padding = {top: 20, right: 30, bottom: 10, left: 10};
@@ -6,76 +8,61 @@ function Elevator() {
   $("#canvasElement").attr('height', this.height);
   this.canvas = $("#canvasElement").get(0);
   this.context = this.canvas.getContext('2d');
-  this.canvas.onmousemove = $.proxy(this.mouseMove, this);
-  this.canvas.onmouseout = $.proxy(this.mouseOut, this);
   this.visibleWidth = this.width - this.padding.left - this.padding.right;
   this.visibleHeight = this.height - this.padding.top - this.padding.bottom;
-  this.drawAxis();
-  this.counter = 0;
-}
-
-Elevator.prototype.setData = function(data) {
-  this.data = this.normalize(data);
-}
-
-Elevator.prototype.normalize = function(data) {
   this.minX = 0, this.maxX = 0, this.minY = 0, this.maxY = 0;
-  for(var i = 0; i < data.length; i++) {
-    var datum = data[i];
-    var valueX = datum.first();
-    var valueY = datum.last();
-    this.minX = this.minX > valueX ? valueX : this.minX;
-    this.maxX = this.maxX < valueX ? valueX : this.maxX;
-    this.minY = this.minY > valueY ? valueY : this.minY;
-    this.maxY = this.maxY < valueY ? valueY : this.maxY;
-  }
+  this.drawAxis();
+}
+
+Elevator.prototype.addPoint = function(point) {
+  this.data.push({point: point});
+  var valueX = point.fullDist;
+  var valueY = point.ele;
+  this.minX = this.minX > valueX ? valueX : this.minX;
+  this.maxX = this.maxX < valueX ? valueX : this.maxX;
+  this.minY = this.minY > valueY ? valueY : this.minY;
+  this.maxY = this.maxY < valueY ? valueY : this.maxY;
+};
+
+Elevator.prototype.init = function() {
+  this.processScreenPoints();
+  this.draw();
+  this.canvas.onmousemove = $.proxy(this.mouseMove, this);
+  this.canvas.onmouseout = $.proxy(this.mouseOut, this);
+};
+
+Elevator.prototype.processScreenPoints = function() {
   var diffY = this.maxY - this.minY;
   this.factorX = this.maxX / this.visibleWidth;
   this.factorY = this.visibleHeight / (diffY == 0 ? 1 : diffY);
   this.offsetY = this.minY < 0 ? 0 - Math.round(this.minY * this.factorY) : 0;
   // this.offsetX = this.minX < 0 ? 0 - Math.round(this.minX * this.factorX) : 0;
-  var result = [];
-  for(var i = 0; i < data.length; i++) {
-    var datum = data[i];
-    result.push({screen: this.getScreenPoint(datum), original: datum});
+  for(var i = 0; i < this.data.length; i++) {
+    var datum = this.data[i];
+    datum.screen = this.getScreenPoint(datum);
   }
-  return result;
 }
 
-Elevator.prototype.getIntermediations = function(p1, p2, factor) {
-  var result = [];
-  for(var i = 1; i < Math.round(factor); i++) {
-    var nextX = p1.first() + i * (p2.first() - p1.first()) / factor;
-    var nextY = (p2.last() - p1.last()) * (nextX - p1.first()) / (p2.first() - p1.first()) + p1.last();
-    result.push({screen: this.getScreenPoint(new Datum([nextX, nextY])), original: new Datum([nextX, nextY])});
-  }
-  return result;
-}
-
-Elevator.prototype.getScreenPoint = function(original) {
-  var x = Math.ceil(original.first() / this.factorX + this.padding.left);
-  var y = this.visibleHeight - Math.round(original.last() * this.factorY + this.offsetY) + this.padding.top;
-  return new Datum([x, y]);
+Elevator.prototype.getScreenPoint = function(datum) {
+  var x = Math.ceil(datum.point.fullDist / this.factorX + this.padding.left);
+  var y = this.visibleHeight - Math.round(datum.point.ele * this.factorY + this.offsetY) + this.padding.top;
+  return {x: x, y: y};
 }
 
 Elevator.prototype.mouseMove = function(event) {
-  // this.counter++;
-  // if(this.counter % 2 == 0) {
-  //   return;
-  // }
   var offset = $(this.canvas).offset();
   var x = event.clientX - offset.left;
   x = x >= this.padding.left ? x : this.padding.left;
-  x = x <= (this.width - this.padding.right) ? x : (this.width + this.padding.right) + 1;
+  x = x <= (this.width - this.padding.right) ? x : (this.width - this.padding.right);
   this.draw();
   this.context.beginPath();
   this.context.moveTo(x, this.padding.top - 3);
   this.context.lineTo(x, this.height - 1);
   this.context.stroke();
-  var datum = this.screenPositions[x];
+  var datum = this.visiblePoints[x];
   if(datum) {
     this.context.fillText(this.getLabel(datum), x, this.padding.top - 5);
-    $(document).trigger("elevation:over", datum);
+    $(document).trigger("elevation:over", datum.point);
   }
 };
 
@@ -85,7 +72,7 @@ Elevator.prototype.mouseOut = function(event) {
 };
 
 Elevator.prototype.getLabel = function(datum) {
-  var value = datum.last() + '';
+  var value = datum.point.ele + '';
   var parts = value.split('.');
   return parts[0] + (parts[1] ? '.' + parts[1].substring(0, 2) : '') + ' m.';
 };
@@ -97,29 +84,19 @@ Elevator.prototype.clear = function() {
 Elevator.prototype.draw = function() {
   this.clear();
   if(this.data.length > 1) {
-    this.drawGraph(this.data);
+    this.drawGraph();
   }
 };
 
-var Datum = function(point) {
-  this.point = point;
-};
-Datum.prototype.first = function() {
-  return this.point[0];
-};
-Datum.prototype.last = function() {
-  return this.point[1];
-};
-
-Elevator.prototype.getSampleData = function() {
-  var data = [];
-  var quantity = 1800;
-  for(var i = -quantity/2; i <= quantity/2; i++) {
-    var x = i * (10 * Math.PI) / quantity;
-    data.push(new Datum([i, Math.sin(x)]));
-  }
-  return data;
-};
+// Elevator.prototype.getSampleData = function() {
+//   var data = [];
+//   var quantity = 1800;
+//   for(var i = -quantity/2; i <= quantity/2; i++) {
+//     var x = i * (10 * Math.PI) / quantity;
+//     data.push(new Datum([i, Math.sin(x)]));
+//   }
+//   return data;
+// };
 
 Elevator.prototype.drawAxis = function() {
   this.context.beginPath();
@@ -127,24 +104,22 @@ Elevator.prototype.drawAxis = function() {
   this.context.lineTo(0, this.height);
   this.context.lineTo(this.width, this.height);
   this.context.stroke();
-}
+};
 
-Elevator.prototype.drawGraph = function(data) {
-  this.screenPositions = [];
-  var previous = data[0];
-  this.screenPositions[previous.screen.first()] = previous.original;
+Elevator.prototype.drawGraph = function() {
+  this.visiblePoints = [];
+  var previous = this.data[0];
+  this.visiblePoints[previous.screen.x] = previous;
   this.context.beginPath();
-  this.context.moveTo(previous.screen.first(), previous.screen.last());
-  for(var i = 0; i < data.length; i++) {
-    var datum = data[i];
+  this.context.moveTo(previous.screen.x, previous.screen.y);
+  for(var i = 0; i < this.data.length; i++) {
+    var datum = this.data[i];
     this.context.quadraticCurveTo(
-      previous.screen.first(),
-      previous.screen.last(),
-      datum.screen.first(),
-      datum.screen.last()
+      previous.screen.x, previous.screen.y,
+      datum.screen.x, datum.screen.y
     );
-    this.screenPositions[datum.screen.first()] = datum.original;
+    this.visiblePoints[datum.screen.x] = datum;
     previous = datum;
   }
   this.context.stroke();
-}
+};
