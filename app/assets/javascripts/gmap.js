@@ -14,7 +14,8 @@ var GMap = function() {
 
 GMap.prototype.init = function() {
   this.line.setMap(this.gmap);
-  this.gmap.fitBounds(this.getBounds()); 
+  this.gmap.fitBounds(this.getBounds());
+  this.initialized = true;
 };
 
 GMap.prototype.addPoint = function(point) {
@@ -35,7 +36,7 @@ GMap.prototype.elevationOver = function(point) {
   if(this.visibleMarker) {
     this.visibleMarker.setVisible(false);
   }
-  if(point.gmarker) {
+  if(point) {
     this.visibleMarker = point.gmarker;
     this.visibleMarker.setVisible(true);
     if($("#followMap:checked").size()) {

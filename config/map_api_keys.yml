@@ -1,0 +1,11 @@
+development:
+  google: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s
+  yandex: AAZwVk8BAAAAjdWuGAIALfCeiwIbPDq1UucQL3klTOgvi-sAAAAAAAAAAABkE43wYyhvATwlkLSY1JdQjyC33w==
+
+test:
+  google: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s
+  yandex: AAZwVk8BAAAAjdWuGAIALfCeiwIbPDq1UucQL3klTOgvi-sAAAAAAAAAAABkE43wYyhvATwlkLSY1JdQjyC33w==
+
+production:
+  google: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s
+  yandex: AH3BVk8BAAAAonK2WQMA0_l3xSDXKo1Ln3BALzIdspDCNZYAAAAAAAAAAAAey2_3d2OBs7fvIGW12Ci47gIigg==

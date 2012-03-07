@@ -1,6 +1,6 @@
-<%= javascript 'http://maps.googleapis.com/maps/api/js?key=AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s&sensor=false' %>
-<%#= javascript 'http://api-maps.yandex.ru/1.1/index.xml?key=AAZwVk8BAAAAjdWuGAIALfCeiwIbPDq1UucQL3klTOgvi-sAAAAAAAAAAABkE43wYyhvATwlkLSY1JdQjyC33w==' %>
-<%= javascript 'elevator.js', 'gmap.js', 'map.js' %>
+<%= javascript "http://maps.googleapis.com/maps/api/js?key=#{MapApiKeys::GOOGLE}&sensor=false" %>
+<%= javascript "http://api-maps.yandex.ru/1.1/index.xml?loadByRequire=1&key=#{MapApiKeys::YANDEX}" %>
+<%= javascript 'elevator.js', 'gmap.js', 'ymap.js', 'map.js' %>
 <%= javascript track_path(@track, format: :js) %>
 
 <p id="notice"><%= notice %></p>
@@ -57,9 +57,19 @@
       <th>Follow Map:</th>
       <td><input type="checkbox" id="followMap" /></td>
     </tr>
+    <tr>
+      <th rowspan='2'>Type:</th>
+      <td><label><input type="radio" name="map_type" id="gmap_toggle" checked="checked" value="gmap" /> Google</label></td>
+    </tr>
+    <tr>
+      <td><label><input type="radio" name="map_type" id="ymap_toggle"  value="ymap" /> Yandex</label></td>
+    </tr>
   </table>  
 </div>
-<div id="gmap"></div>
+<div id="maps">
+  <div id="gmap" class="map"></div>
+  <div id="ymap" class="map" style="display: none;"></div>
+</div>
 <div style="clear: both;"></div>
 <div id="elevation">
   <canvas id="canvasElement"></canvas>

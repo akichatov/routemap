@@ -1,12 +1,25 @@
 var Map = function() {
   this.gmap = new GMap();
+  this.ymap = new YMap();
+  this.currentMap = this.gmap;
   this.elevator = new Elevator();
   this.metersPerPixel = Map.track.distance / this.elevator.visibleWidth;
   this.normalized = [];
   this.initTrack();
   this.elevator.init();
-  this.gmap.init();
+  this.currentMap.init();
   $(document).bind('elevation:over', $.proxy(this.elevationOver, this));
+  $("#gmap_toggle, #ymap_toggle").click($.proxy(this.toggle, this));
+};
+
+Map.prototype.toggle = function(event) {
+  var mapType = event.target.value;
+  $("#maps .map").hide();
+  $("#" + mapType).show();
+  this.currentMap = this[mapType];
+  if(!this.currentMap.initialized) {
+    this.currentMap.init();
+  }
 };
 
 Map.prototype.initTrack = function() {
@@ -31,6 +44,7 @@ Map.prototype.initTrack = function() {
 
 Map.prototype.initPoint = function(point) {
   this.gmap.addPoint(point);
+  this.ymap.addPoint(point);
   this.elevator.addPoint(point);
 };
 
@@ -58,8 +72,8 @@ Map.prototype.getIntermediations = function(p1, p2) {
 }
 
 Map.prototype.elevationOver = function(event, point) {
+  this.currentMap.elevationOver(point);
   if(point) {
-    this.gmap.elevationOver(point);
     $("#time").html(point.time);
     $("#pointEle").html(point.ele.toFixed(2));
     $("#pointMeters").html(point.fullDist.toFixed(2));
