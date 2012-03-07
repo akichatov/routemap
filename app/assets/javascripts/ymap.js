@@ -41,21 +41,26 @@ YMap.prototype.addPoint = function(point) {
 };
 
 YMap.prototype.elevationOver = function(point) {
-  if(this.marker) {
-    this.map.removeOverlay(this.marker);
-  }
   if(point) {
-    this.marker = new YMaps.Placemark(point.ypoint, {style: "default#bicycleIcon"});
-    this.map.addOverlay(this.marker);
+    if(!this.marker) {
+      this.marker = new YMaps.Placemark(point.ypoint, {style: "default#bicycleIcon"});
+      this.map.addOverlay(this.marker);
+    }
+    this.marker.setGeoPoint(point.ypoint);
     if($("#followMap:checked").size()) {
       clearTimeout(this.moving);
       this.moving = setTimeout($.proxy(this.move, this, point.ypoint), 50);
+    }
+  } else {
+    if(this.marker) {
+      this.map.removeOverlay(this.marker);
+      this.marker = null;
     }
   }
 };
 
 YMap.prototype.move = function(ypoint) {
-  this.map.panTo(ypoint, {flying: true});
+  this.map.panTo(ypoint, {flying: false});
 };
 
 YMap.prototype.getBounds = function() {
