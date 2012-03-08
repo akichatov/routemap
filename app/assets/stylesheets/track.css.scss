@@ -11,6 +11,9 @@
     th {
       text-align: left;
     }
+    th.divider {
+      text-align: center;
+    }
     td {
       text-align: right;
     }
@@ -24,4 +27,14 @@
 #maps .map {
   margin-right: 260px;
   height: 570px;
+}
+
+#cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #FFF url('/assets/loading.gif') no-repeat 50% 50%;
+  z-index: 1001;
 }

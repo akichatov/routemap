@@ -14,6 +14,9 @@ var Map = function() {
   this.elevator.init();
   this.currentMap.init();
   $(document).bind('elevation:over', $.proxy(this.elevationOver, this));
+  $(document).bind('selection:start', $.proxy(this.startSelection, this));
+  $(document).bind('selection:end', $.proxy(this.endSelection, this));
+  $(document).bind('selection:clear', $.proxy(this.clearSelection, this));
   $("#gmap_toggle, #ymap_toggle").click($.proxy(this.toggle, this));
 };
 
@@ -33,7 +36,7 @@ Map.prototype.initTrack = function() {
     point.time = new Date(Date.parse(point.time)).toUTCString();
     this.normalized.push(point);
     var next = Map.track.points[i + 1];
-    if(next && next.dist / this.metersPerPixel > 1) {
+    if(next && next.dist / this.metersPerPixel > 1.0) {
       this.normalized = this.normalized.concat(this.getIntermediations(point, next));
     }
   }
@@ -55,7 +58,7 @@ Map.prototype.initPoint = function(point) {
 
 Map.prototype.getIntermediations = function(p1, p2) {
   var result = [];
-  var count = Math.round(p2.dist / this.metersPerPixel);
+  var count = Math.ceil(p2.dist / this.metersPerPixel);
   if(count > 1) {
     var dist = p2.dist / count;
     p2.new_dist = dist;
@@ -90,6 +93,28 @@ Map.prototype.elevationOver = function(event, point) {
   }
 };
 
+Map.prototype.startSelection = function(event, point) {
+  this.startSelectionPoint = point;
+  this.currentMap.startSelection(point);
+  $("#selectionStartEle").html(point.ele);
+};
+
+Map.prototype.endSelection = function(event, point) {
+  this.endSelectionPoint = point;
+  this.currentMap.endSelection(point);
+  $("#selectionEndEle").html(point.ele);
+  $("#selectionDistance").html(this.getSelectionDistance().toFixed(2));
+};
+
+Map.prototype.clearSelection = function(event, point) {
+  this.currentMap.clearSelection(point);
+  $("#selectionStartEle, #selectionEndEle, #selectionDistance").html('');
+};
+
+Map.prototype.getSelectionDistance = function() {
+  return Math.abs(this.startSelectionPoint.fullDist - this.endSelectionPoint.fullDist);
+};
+
 Map.prototype.getSpeed = function(index) {
   var point = this.normalized[index];
   var dist = point.dist;
@@ -120,4 +145,7 @@ $(function() {
   $("#ele_max").html(Map.track.max.ele);
   $("#climb").html(Map.track.climb.toFixed(2));
   $("#descent").html(Map.track.descent.toFixed(2));
+  setTimeout(function() {
+    $("#cover").hide();
+  }, 500);
 });

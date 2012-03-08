@@ -60,6 +60,15 @@ YMap.prototype.elevationOver = function(point) {
   }
 };
 
+YMap.prototype.startSelection = function(point) {
+};
+
+YMap.prototype.endSelection = function(point) {
+};
+
+YMap.prototype.clearSelection = function(point) {
+};
+
 YMap.prototype.move = function(ypoint) {
   this.map.panTo(ypoint, {flying: false});
 };

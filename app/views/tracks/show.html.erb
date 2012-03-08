@@ -2,12 +2,15 @@
 <%= javascript "http://api-maps.yandex.ru/1.1/index.xml?loadByRequire=1&key=#{MapApiKeys::YANDEX}" %>
 <%= javascript 'elevator.js', 'gmap.js', 'ymap.js', 'map.js' %>
 <%= javascript track_path(@track, format: :js) %>
-
+<div id='cover'></div>
 <p id="notice"><%= notice %></p>
 
 <div id="info">
   <h3><%= @track.name %></h3>
   <table id="track_statistic">
+    <tr>
+      <th colspan='2' class='divider'>Track:</th>
+    </tr>
     <tr>
       <th rowspan='2'>Distance:</th>
       <td><span id="distance_m"></span> m</td>
@@ -32,7 +35,7 @@
       <td><span id="descent"></span> m</td>
     </tr>
     <tr>
-      <th colspan='2'>Point data:</th>
+      <th colspan='2' class='divider'>Point:</th>
     </tr>
     <tr>
       <th>Time:</th>
@@ -52,6 +55,24 @@
     </tr>
     <tr>
       <td><span id="pointKms"></span> km</td>
+    </tr>
+    <tr>
+      <th colspan='2' class='divider'>Selection:</th>
+    </tr>
+    <tr>
+      <th>Distance:</th>
+      <td><span id="selectionDistance"></span> m</td>
+    </tr>
+    <tr>
+      <th>Elevation start:</th>
+      <td><span id="selectionStartEle"></span> m</td>
+    </tr>
+    <tr>
+      <th>Elevation end:</th>
+      <td><span id="selectionEndEle"></span> m</td>
+    </tr>
+    <tr>
+      <th colspan='2' class='divider'>&nbsp;</th>
     </tr>
     <tr>
       <th>Follow Map:</th>
