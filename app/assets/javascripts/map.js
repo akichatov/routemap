@@ -86,10 +86,7 @@ Map.prototype.elevationOver = function(event, point) {
     $("#pointEle").html(point.ele.toFixed(2));
     $("#pointMeters").html(point.fullDist.toFixed(2));
     $("#pointKms").html((point.fullDist / 1000).toFixed(2));
-    var speed = this.getSpeed(point.index);
-    if(speed != null) {
-      $("#pointSpeed").html(speed);
-    }
+    $("#pointSpeed").html(this.getSpeed(point.index));
   }
 };
 
@@ -116,25 +113,21 @@ Map.prototype.getSelectionDistance = function() {
 };
 
 Map.prototype.getSpeed = function(index) {
-  var point = this.normalized[index];
-  var dist = point.dist;
   var time = 0;
-  var i = 0;
-  var previous = null;
-  do {
-    if(previous) {
-      time += (Date.parse(point.time) - Date.parse(previous.time)) / 1000;
-      if(i > 1) {
-        dist += this.normalized[index - i + 1].dist;
-      }
-    }
+  var dist = 0;
+  var i = 1;
+  var point = this.normalized[index];
+  var previous = this.normalized[index - i];
+  while(previous && time < 1) {
+    time += (Date.parse(point.time) - Date.parse(previous.time)) / 1000;
+    dist = point.fullDist - previous.fullDist;
     i++;
     previous = this.normalized[index - i];
-  } while (previous && time < 3);
+  }
   if(time > 0) {
     return ((dist / 1000) / (time / 3600)).toFixed(2);
   }
-  return null;
+  return 0.0;
 };
 
 $(function() {
