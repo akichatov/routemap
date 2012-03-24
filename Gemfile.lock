@@ -29,6 +29,15 @@ GEM
       i18n (~> 0.6)
       multi_json (~> 1.0)
     arel (3.0.2)
+    aws-s3 (0.6.2)
+      builder
+      mime-types
+      xml-simple
+    aws-sdk (1.3.8)
+      httparty (~> 0.7)
+      json (~> 1.4)
+      nokogiri (<= 1.5.0)
+      uuidtools (~> 2.1)
     builder (3.0.0)
     cocaine (0.2.1)
     coffee-rails (3.2.2)
@@ -42,6 +51,9 @@ GEM
     execjs (1.3.0)
       multi_json (~> 1.0)
     hike (1.2.1)
+    httparty (0.8.1)
+      multi_json
+      multi_xml
     i18n (0.6.0)
     journey (1.0.3)
     jquery-rails (2.0.1)
@@ -54,6 +66,7 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.17.2)
     multi_json (1.1.0)
+    multi_xml (0.4.2)
     mysql2 (0.3.11)
     nokogiri (1.5.0)
     paperclip (2.7.0)
@@ -106,11 +119,15 @@ GEM
     uglifier (1.2.3)
       execjs (>= 0.3.0)
       multi_json (>= 1.0.2)
+    uuidtools (2.1.2)
+    xml-simple (1.1.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  aws-s3
+  aws-sdk
   coffee-rails (~> 3.2.1)
   jquery-rails
   mysql2

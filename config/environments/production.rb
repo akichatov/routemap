@@ -1,4 +1,12 @@
 Routemap::Application.configure do
+  TRACK_ATTACHMENT_OPTS = {
+    storage: :s3,
+    bucket: ENV['S3_BUCKET_NAME'],
+    s3_credentials: {
+      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
+    }
+  }
   # Settings specified here will take precedence over those in config/application.rb
 
   # Code is not reloaded between requests

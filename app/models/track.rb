@@ -2,7 +2,7 @@ class Track < ActiveRecord::Base
 
   attr_accessible :name, :attachment
 
-  has_attached_file :attachment
+  has_attached_file :attachment, TRACK_ATTACHMENT_OPTS
 
   validates_presence_of :name, :attachment_file_name
 
