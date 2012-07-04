@@ -1,4 +1,5 @@
 Routemap::Application.configure do
+  RM_DOMAIN = 'lvh.me'
   TRACK_ATTACHMENT_OPTS = {}
   # Settings specified here will take precedence over those in config/application.rb
 

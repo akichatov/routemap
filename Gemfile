@@ -7,6 +7,7 @@ gem 'rails', '3.2.1'
 
 group :development do
   gem 'mysql2'
+  gem 'thin'
 end
 
 group :production do
@@ -17,6 +18,9 @@ end
 
 gem 'paperclip'
 gem 'nokogiri'
+gem 'devise'
+gem 'ruby-openid', git: 'git://github.com/openid/ruby-openid.git'
+gem 'omniauth-openid'
 
 # Gems used only for assets and not required
 # in production environments by default.

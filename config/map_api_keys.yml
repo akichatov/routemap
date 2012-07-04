@@ -1,7 +1,7 @@
 development:
   google: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s
-  # yandex: AAZwVk8BAAAAjdWuGAIALfCeiwIbPDq1UucQL3klTOgvi-sAAAAAAAAAAABkE43wYyhvATwlkLSY1JdQjyC33w== #lvh.me
-  yandex: AEzBVk8BAAAAHGzhEQMAL_kWUSrL4qCZZlKsP4-8p48dMPAAAAAAAAAAAACzXu6KbKRc2Et6uPdX212giBQMJg==   #aak.ath.cx
+  yandex: AAZwVk8BAAAAjdWuGAIALfCeiwIbPDq1UucQL3klTOgvi-sAAAAAAAAAAABkE43wYyhvATwlkLSY1JdQjyC33w== #lvh.me
+  #yandex: AEzBVk8BAAAAHGzhEQMAL_kWUSrL4qCZZlKsP4-8p48dMPAAAAAAAAAAAACzXu6KbKRc2Et6uPdX212giBQMJg==   #aak.ath.cx
 
 test:
   google: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s

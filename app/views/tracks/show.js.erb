@@ -1,1 +1,1 @@
-Map.track = <%= GpxTrack.parse(@track.attachment.to_file).to_json.html_safe %>
+Map.track = <%= GpxTrack.parse(@track.attachment.path).to_json.html_safe %>

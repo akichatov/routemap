@@ -1,4 +1,5 @@
 Routemap::Application.configure do
+  RM_DOMAIN = 'routemap.herokuapp.com'
   TRACK_ATTACHMENT_OPTS = {
     storage: :s3,
     bucket: ENV['S3_BUCKET_NAME'],
@@ -7,6 +8,8 @@ Routemap::Application.configure do
       secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
     }
   }
+
+  config.action_mailer.default_url_options = { :host => RM_DOMAIN }
   # Settings specified here will take precedence over those in config/application.rb
 
   # Code is not reloaded between requests
