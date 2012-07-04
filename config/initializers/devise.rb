@@ -1,6 +1,6 @@
 require 'openid/store/filesystem'
 require "openid/fetchers"
-OpenID.fetcher.ca_file = "#{Rails.root}/lib/certs/ca-bundle.crt"
+OpenID.fetcher.ca_file = "/usr/lib/ssl/certs/ca-certificates.crt"
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
