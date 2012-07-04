@@ -12,4 +12,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       redirect_to new_user_session_path
     end
   end
+
+  def after_omniauth_failure_path_for(scope)
+    root_path
+  end
+
 end
