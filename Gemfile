@@ -7,8 +7,8 @@ gem 'rails', '3.2.1'
 
 group :development do
   gem 'mysql2'
-  gem 'thin'
 end
+gem 'thin'
 
 group :production do
   gem 'pg'
