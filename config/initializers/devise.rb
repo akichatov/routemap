@@ -232,6 +232,6 @@ Devise.setup do |config|
   # When using omniauth, Devise cannot automatically set Omniauth path,
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = "/my_engine/users/auth"
-  config.omniauth :open_id, store: OpenID::Store::Filesystem.new('/tmp'), name: 'google',
+  config.omniauth :open_id, store: OpenID::Store::Filesystem.new('./tmp'), name: 'google',
                   identifier: 'https://www.google.com/accounts/o8/id', require: 'omniauth-openid'
 end
