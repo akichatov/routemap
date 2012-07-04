@@ -1,8 +1,7 @@
 #header {
-  height: 30px;
-  overflow: hidden;
-
   #user_info {
-    float: right;
+    position: absolute;
+    top: 5px;
+    right: 10px;
   }
 }

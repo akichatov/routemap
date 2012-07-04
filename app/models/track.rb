@@ -1,5 +1,5 @@
 class Track < ActiveRecord::Base
-
+  belongs_to :user
   attr_accessible :name, :attachment
 
   has_attached_file :attachment, TRACK_ATTACHMENT_OPTS

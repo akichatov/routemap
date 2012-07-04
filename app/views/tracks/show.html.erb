@@ -3,8 +3,6 @@
 <%= javascript 'elevator.js', 'gmap.js', 'ymap.js', 'map.js' %>
 <%= javascript track_path(@track, format: :js) %>
 <div id='cover'></div>
-<p id="notice"><%= notice %></p>
-
 <div id="info">
   <h3><%= @track.name %></h3>
   <table id="track_statistic">
