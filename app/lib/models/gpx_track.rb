@@ -2,9 +2,15 @@ class GpxTrack
   UNIT_FACTOR = { meters: 1.0, kms: 0.001 }
   attr_reader :min, :max, :points, :distance, :climb, :descent
 
-  def self.parse(gpx_file)
+  def self.parse(track)
+    if Rails.env == 'production'
+      require 'open-uri'
+      file = open(track.attachment.url)
+    else
+      file = File.open(track.attachment.path)
+    end
     points = []
-    doc = Nokogiri::XML(File.open(gpx_file))
+    doc = Nokogiri::XML(open(track.attachment.url))
     doc.search("trkpt").each do |point|
       lat = point.attr("lat").to_f
       lon = point.attr("lon").to_f
