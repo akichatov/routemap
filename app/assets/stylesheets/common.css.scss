@@ -5,3 +5,44 @@
     right: 10px;
   }
 }
+
+#track_form {
+  .field_with_errors {
+    display: inline;
+  }
+  input[type='text'] {
+    width: 140px;
+  }
+}
+#tracks {
+  width: 802px;
+
+  #track_list {
+    float: right;
+    width: 550px;
+    table {
+      margin-left: 20px;
+      width: 100%;
+    }
+  }
+
+  #tag_list {
+    float: left;
+    width: 250px;
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      li {
+        padding: 5px;
+        &.active {
+          background: #eee;
+        }
+        small {
+          float: right;
+          line-height: 20px;
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 Routemap::Application.configure do
   RM_DOMAIN = 'routemap.herokuapp.com'
   TRACK_ATTACHMENT_OPTS = {
+    url: '/tracks/attachments/:hash/:basename.:extension',
     storage: :s3,
     bucket: ENV['S3_BUCKET_NAME'],
     s3_credentials: {

@@ -1,11 +1,37 @@
 <h1>Listing tracks</h1>
-
-<ul>
-  <%- @tracks.each do |track| -%>
-    <li><%= link_to track.name, track %></li>
-  <%- end -%>
-</ul>
-
+<%= render 'form' %>
 <br />
-
-<%= link_to 'New Track', new_track_path %>
+<div id='tracks'>
+  <div id='tag_list'>
+    <ul>
+      <li class="<%= @tag.nil? && 'active' %>">
+        <%= link_to 'All', tracks_path %>
+        <small>(<%= @all_tracks.size %>)</small>
+      </li>
+      <%- @tags.each do |tag| -%>
+        <%- if tag.tracks.any? -%>
+          <li class="<%= @tag == tag && 'active' %>">
+            <%= link_to tag.name, tracks_path(tag_id: tag.id) %>
+            <small>(<%= tag.tracks.size %>)</small>
+          </li>
+        <%- end -%>
+      <%- end -%>
+    </ul>
+  </div>
+  <div id='track_list'>
+    <table>
+      <tbody>
+      <%- @tracks.each_with_index do |track, index| -%>
+        <tr>
+          <td><%= index + 1 %>.</td>
+          <td><%= link_to track.name, track %></td>
+          <td><%= track.tag_name %></td>
+          <td><%= link_to 'gpx', track.attachment.url %></td>
+          <td><%= link_to 'edit', edit_track_path(track) %></td>
+          <td><%= link_to 'delete', track_path(track), method: :delete, confirm: 'Are you sure?' %></td>
+        </tr>
+      <%- end -%>
+      </tbody>
+    </table>
+  </div>
+</div>

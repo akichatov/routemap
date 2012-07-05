@@ -3,6 +3,12 @@
 <%= javascript 'elevator.js', 'gmap.js', 'ymap.js', 'map.js' %>
 <%= javascript track_path(@track, format: :js) %>
 <div id='cover'></div>
+<%- if user_signed_in? -%>
+  <small>
+    <%= link_to 'Edit', edit_track_path(@track) %> |
+    <%= link_to 'Back', tracks_path %>
+  </small>
+<%- end -%>
 <div id="info">
   <h3><%= @track.name %></h3>
   <table id="track_statistic">
@@ -93,5 +99,3 @@
 <div id="elevation">
   <canvas id="canvasElement"></canvas>
 </div>
-<%= link_to 'Edit', edit_track_path(@track) %> |
-<%= link_to 'Back', tracks_path %>

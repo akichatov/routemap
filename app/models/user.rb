@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password #, :password_confirmation, :remember_me
 
   has_many :tracks
+  has_many :tags
 
   def self.find_for_open_id(access_token, signed_in_resource=nil)
     data = access_token.info

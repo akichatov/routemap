@@ -12,3 +12,10 @@
 //
 //= require jquery
 //= require jquery_ujs
+
+$(function() {
+  var hideFlash = function() {
+    $("#flash").hide();
+  };
+  setTimeout(hideFlash, 10000);
+});

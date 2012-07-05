@@ -18,10 +18,12 @@
       <%- end -%>
     </div>
   </div>
-  <div id="flash">
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
-  </div>
+  <%- if notice || alert -%>
+    <div id="flash">
+      <p class="notice"><%= notice %></p>
+      <p class="alert"><%= alert %></p>
+    </div>
+  <%- end -%>
   <div id='content'>
     <%= yield %>
   </div>

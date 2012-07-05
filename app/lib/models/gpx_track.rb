@@ -10,7 +10,7 @@ class GpxTrack
       file = File.open(track.attachment.path)
     end
     points = []
-    doc = Nokogiri::XML(open(track.attachment.url))
+    doc = Nokogiri::XML(file)
     doc.search("trkpt").each do |point|
       lat = point.attr("lat").to_f
       lon = point.attr("lon").to_f
