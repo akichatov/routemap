@@ -52,8 +52,7 @@ GMap.prototype.elevationOver = function(point) {
     this.visibleMarker = point.gmarker;
     this.visibleMarker.setVisible(true);
     if($("#followMap:checked").size() && !this.endSelectionPoint) {
-      clearTimeout(this.moving);
-      this.moving = setTimeout(this.moveBound, this.movingDelay);
+      this.gmap.setCenter(this.visibleMarker.position);
     }
   }
 };
