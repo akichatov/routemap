@@ -16,7 +16,8 @@ class TracksController < ApplicationController
   def create
     @track = current_user.tracks.build(params[:track])
     if @track.save
-      redirect_to tracks_path, notice: 'Track was successfully created.'
+      path = @track.tag ? tracks_path(group: @track.tag.code) : tracks_path
+      redirect_to path, notice: 'Track was successfully created.'
     else
       render action: :index
     end
@@ -42,7 +43,7 @@ class TracksController < ApplicationController
 private
 
   def find_tag
-    @tag = current_user.tags.find(params[:tag_id]) if params[:tag_id]
+    @tag = current_user.tags.find_by_code!(params[:group]) if params[:group]
   end
 
   def find_tags

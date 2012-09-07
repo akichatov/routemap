@@ -11,8 +11,11 @@
       <%- @tags.each do |tag| -%>
         <%- if tag.tracks.any? -%>
           <li class="<%= @tag == tag && 'active' %>">
-            <%= link_to tag.name, tracks_path(tag_id: tag.id) %>
-            <small>(<%= tag.tracks.size %>)</small>
+            <%= link_to tag.name, tracks_path(group: tag.code) %>
+            <small>
+              <%= link_to 'View', group_path(tag) %>
+              (<%= tag.tracks.size %>)
+            </small>
           </li>
         <%- end -%>
       <%- end -%>
@@ -26,6 +29,7 @@
           <td><%= index + 1 %>.</td>
           <td><%= link_to track.name, track %></td>
           <td><%= track.tag_name %></td>
+          <td><%= format_distance track.distance %></td>
           <td><%= link_to 'gpx', track.attachment.url %></td>
           <td><%= link_to 'edit', edit_track_path(track) %></td>
           <td><%= link_to 'delete', track_path(track), method: :delete, confirm: 'Are you sure?' %></td>

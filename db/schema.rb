@@ -11,25 +11,36 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120705082317) do
+ActiveRecord::Schema.define(:version => 20120905001621) do
 
   create_table "tags", :force => true do |t|
     t.integer  "user_id"
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "code"
   end
 
   create_table "tracks", :force => true do |t|
-    t.string   "name",                    :null => false
-    t.string   "code",                    :null => false
-    t.string   "attachment_file_name",    :null => false
-    t.integer  "attachment_file_size",    :null => false
-    t.string   "attachment_content_type", :null => false
-    t.datetime "created_at",              :null => false
-    t.datetime "updated_at",              :null => false
+    t.string   "name",                                       :null => false
+    t.string   "code",                                       :null => false
+    t.string   "attachment_file_name",                       :null => false
+    t.integer  "attachment_file_size",                       :null => false
+    t.string   "attachment_content_type",                    :null => false
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
     t.integer  "user_id"
     t.integer  "tag_id"
+    t.integer  "distance"
+    t.integer  "climb"
+    t.integer  "descent"
+    t.float    "min_lat"
+    t.float    "min_lon"
+    t.float    "max_lat"
+    t.float    "max_lon"
+    t.float    "min_ele"
+    t.float    "max_ele"
+    t.boolean  "processed",               :default => false, :null => false
   end
 
   create_table "users", :force => true do |t|

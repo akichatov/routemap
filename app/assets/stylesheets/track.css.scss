@@ -2,6 +2,7 @@
   float: right;
   width: 250px;
   margin-left: -260px;
+  margin-top: 30px;
   overflow: hidden;
   font-size: 12px;
 
@@ -26,7 +27,7 @@
 
 #maps .map {
   margin-right: 260px;
-  height: 570px;
+  margin-bottom: 10px;
 }
 
 #cover {
@@ -38,3 +39,31 @@
   background: #FFF url('/assets/loading.gif') no-repeat 50% 50%;
   z-index: 1001;
 }
+
+#pointInfo {
+  height: 30px;
+  font-size: 12px;
+  td > div {
+    width: 100px;
+  }
+  #time {
+    width: 300px;
+  }
+}
+
+#elevation {
+  #elevationGraph {
+    overflow-x: auto;
+    &.dragging canvas {
+      cursor: url("http://maps.gstatic.com/mapfiles/openhand_8_8.cur"), default;
+    }
+  }
+  #elevationControls {
+    width: 30px;
+    float: left;
+    button {
+      width: 30px;
+    }
+  }
+}
+

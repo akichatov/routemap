@@ -1,25 +1,35 @@
 <%= javascript "http://maps.googleapis.com/maps/api/js?key=#{MapApiKeys::GOOGLE}&sensor=false" %>
 <%= javascript "http://api-maps.yandex.ru/1.1/index.xml?loadByRequire=1&key=#{MapApiKeys::YANDEX}" %>
 <%= javascript 'elevator.js', 'gmap.js', 'ymap.js', 'map.js' %>
-<%= javascript track_path(@track, format: :js) %>
+<%= javascript track_path(@track, format: :js) if @track %>
+<%= javascript group_path(@tag, format: :js) if @tag %>
 <div id='cover'></div>
-<%- if user_signed_in? -%>
-  <small>
-    <%= link_to 'Edit', edit_track_path(@track) %> |
-    <%= link_to 'Back', tracks_path %>
-  </small>
-<%- end -%>
 <div id="info">
-  <h3><%= @track.name %></h3>
+  <div>
+    <strong><%= (@track || @tag).name %></strong>
+    <%- if @track && @track.tag -%>
+      <%= link_to @track.tag.name, group_path(@track.tag) %>
+    <%- end -%>
+    <%- if user_signed_in? -%>
+      <small>
+        <%- if @track -%>
+          <%= link_to 'Edit', edit_track_path(@track) %> |
+        <%- end -%>
+        <%= link_to 'All tracks', tracks_path %>
+      </small>
+    <%- end -%>
+  </div>
   <table id="track_statistic">
+    <%- if @tag -%>
+      <%- @tag.tracks.each do |track| -%>
+        <tr>
+          <th><%= link_to track.name, track %></th>
+          <td><%= format_distance track.distance %></td>
+        </tr>
+      <%- end -%>
+    <%- end -%>
     <tr>
-      <th colspan='2' class='divider'>Track:</th>
-    </tr>
-    <tr>
-      <th rowspan='2'>Distance:</th>
-      <td><span id="distance_m"></span> m</td>
-    </tr>
-    <tr>
+      <th>Distance:</th>
       <td><span id="distance_km"></span> km</td>
     </tr>
     <tr>
@@ -37,28 +47,6 @@
     <tr>
       <th>Descent:</th>
       <td><span id="descent"></span> m</td>
-    </tr>
-    <tr>
-      <th colspan='2' class='divider'>Point:</th>
-    </tr>
-    <tr>
-      <th>Time:</th>
-      <td><span id="time"></span></td>
-    </tr>
-    <tr>
-      <th>Elevation:</th>
-      <td><span id="pointEle"></span> m</td>
-    </tr>
-    <tr>
-      <th>Speed:</th>
-      <td><span id="pointSpeed"></span> km/h</td>
-    </tr>
-    <tr>
-      <th rowspan='2'>Distance:</th>
-      <td><span id="pointMeters"></span> m</td>
-    </tr>
-    <tr>
-      <td><span id="pointKms"></span> km</td>
     </tr>
     <tr>
       <th colspan='2' class='divider'>Selection:</th>
@@ -79,10 +67,6 @@
       <th colspan='2' class='divider'>&nbsp;</th>
     </tr>
     <tr>
-      <th>Follow Map:</th>
-      <td><input type="checkbox" id="followMap" /></td>
-    </tr>
-    <tr>
       <th rowspan='2'>Type:</th>
       <td><label><input type="radio" name="map_type" id="gmap_toggle" checked="checked" value="gmap" /> Google</label></td>
     </tr>
@@ -96,6 +80,28 @@
   <div id="ymap" class="map" style="display: none;"></div>
 </div>
 <div style="clear: both;"></div>
+<div id="pointInfo">
+  <table>
+    <tr>
+      <th>Time:</th>
+      <td><div id="time"></div></td>
+      <th>Elevation:</th>
+      <td><div><span id="pointEle"></span> m</div></td>
+      <th>Speed:</th>
+      <td><div><span id="pointSpeed"></span> km/h</div></td>
+      <th rowspan='2'>Distance:</th>
+      <td><div><span id="pointMeters"></span> m</div></td>
+      <td><div><span id="pointKms"></span> km</div></td>
+    </tr>
+  </table>
+</div>
 <div id="elevation">
-  <canvas id="canvasElement"></canvas>
+  <div id="elevationControls">
+    <button id="elevationZoomIn" title="Zoom in">+</button>
+    <button id="elevationZoomOut" title="Zoom out">-</button>
+    <input type="checkbox" id="followMap" title="Follow map"/>
+  </div>
+  <div id="elevationGraph">
+    <canvas id="canvasElement"></canvas>
+  </div>
 </div>

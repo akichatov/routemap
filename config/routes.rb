@@ -8,4 +8,5 @@ Routemap::Application.routes.draw do
   end
   root to: "home#index"
   resources :tracks
+  resources :groups, only: [:show]
 end

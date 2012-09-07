@@ -17,10 +17,10 @@ group :production do
 end
 
 gem 'paperclip'
-gem 'nokogiri'
 gem 'devise'
 gem 'ruby-openid', git: 'git://github.com/openid/ruby-openid.git'
 gem 'omniauth-openid'
+gem 'libxml-ruby', :require => 'libxml'
 
 # Gems used only for assets and not required
 # in production environments by default.

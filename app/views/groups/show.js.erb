@@ -1,0 +1,7 @@
+Map.tracks = [
+  <%- @tag.tracks.each do |track| -%>
+    <%= track.gpx.to_json.html_safe %>,
+  <%- end -%>
+  null
+];
+Map.tracks.pop();

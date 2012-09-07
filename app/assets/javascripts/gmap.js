@@ -1,5 +1,7 @@
-var GMap = function(options) {
+var GMap = function(options, map) {
   this.options = options;
+  this.map = map;
+  this.colorIndex = -1;
   this.movingDelay = 40;
   this.latLngs = [];
   this.mapOptions = {
@@ -7,17 +9,19 @@ var GMap = function(options) {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   this.gmap = new google.maps.Map($("#gmap").get(0), this.mapOptions);
-  this.line = new google.maps.Polyline({
-    path: new google.maps.MVCArray(),
-    strokeColor: '#' + this.options.strokeColor,
-    strokeOpacity: this.options.strokeOpacity,
-    strokeWeight: this.options.strokeWeight
-  });
+  this.lines = [];
   this.moveBound = $.proxy(this.move, this);
 };
 
+GMap.prototype.nextColor = function() {
+  this.colorIndex++;
+  if(this.colorIndex == this.options.strokeColors.length) {
+    this.colorIndex = 0;
+  }
+  return this.options.strokeColors[this.colorIndex];
+};
+
 GMap.prototype.init = function() {
-  this.line.setMap(this.gmap);
   this.gmap.fitBounds(this.getBounds());
   this.initialized = true;
   this.startSelectionMarker = this.createMarker("Start", null, '/assets/start-flag.png');
@@ -25,12 +29,24 @@ GMap.prototype.init = function() {
 };
 
 GMap.prototype.addPoint = function(point) {
+  var line = this.lines[this.lines.length - 1];
+  if(point.first) {
+    var line = new google.maps.Polyline({
+      path: new google.maps.MVCArray(),
+      strokeColor: '#' + this.nextColor(),
+      strokeOpacity: this.options.strokeOpacity,
+      strokeWeight: this.options.strokeWeight
+    });
+    this.lines.push(line);
+    line.setMap(this.gmap);
+  }
   point.latLng = new google.maps.LatLng(point.lat, point.lon);
   if(!point.generated) {
-    this.line.getPath().push(point.latLng);
+    line.getPath().push(point.latLng);
   }
   this.latLngs.push(point.latLng);
-  point.gmarker = this.createMarker("Alt:" + point['ele'], point.latLng)
+  point.latLngIndex = this.latLngs.length - 1;
+  point.gmarker = this.createMarker("Alt:" + point['ele'], point.latLng);
 };
 
 GMap.prototype.createMarker = function(title, position, icon) {
@@ -53,7 +69,7 @@ GMap.prototype.elevationOver = function(point) {
     this.visibleMarker.setVisible(true);
     if($("#followMap:checked").size() && !this.endSelectionPoint) {
       this.gmap.setCenter(this.visibleMarker.position);
-    }
+      }
   }
 };
 
@@ -65,6 +81,8 @@ GMap.prototype.startSelection = function(point) {
   this.startSelectionPoint = point;
   this.startSelectionMarker.setPosition(point.latLng);
   this.startSelectionMarker.setVisible(true);
+  this.abounds = this.gmap.getBounds();
+  this.zoom = this.gmap.getZoom();
 };
 
 GMap.prototype.endSelection = function(point) {
@@ -77,7 +95,7 @@ GMap.prototype.endSelection = function(point) {
 };
 
 GMap.prototype.clearSelection = function(point) {
-  this.startSelectionMarker.setVisible(false)
+  this.startSelectionMarker.setVisible(false);
   this.endSelectionMarker.setVisible(false);
   this.startSelectionPoint = this.endSelectionPoint = null;
   this.gmap.fitBounds(this.abounds || this.getBounds());
@@ -85,11 +103,11 @@ GMap.prototype.clearSelection = function(point) {
 };
 
 GMap.prototype.getSelectionBounds = function() {
-  var startIndex = this.startSelectionPoint.index;
-  var endIndex = this.endSelectionPoint.index;
+  var startIndex = this.startSelectionPoint.latLngIndex;
+  var endIndex = this.endSelectionPoint.latLngIndex;
   if(startIndex > endIndex) {
     startIndex = endIndex;
-    endIndex = this.startSelectionPoint.index;
+    endIndex = this.startSelectionPoint.latLngIndex;
   }
   var latLngs = this.latLngs.slice(startIndex, endIndex);
   var bounds = new google.maps.LatLngBounds();
@@ -102,8 +120,8 @@ GMap.prototype.getSelectionBounds = function() {
 GMap.prototype.getBounds = function() {
   if(!this.bounds) {
     this.bounds = new google.maps.LatLngBounds();
-    this.bounds.extend(new google.maps.LatLng(Map.track.min.lat, Map.track.min.lon));
-    this.bounds.extend(new google.maps.LatLng(Map.track.max.lat, Map.track.max.lon));
+    this.bounds.extend(new google.maps.LatLng(this.map.min.lat, this.map.min.lon));
+    this.bounds.extend(new google.maps.LatLng(this.map.max.lat, this.map.max.lon));
   }
   return this.bounds;
 };
