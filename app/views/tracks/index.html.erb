@@ -9,11 +9,11 @@
         <small>(<%= @all_tracks.size %>)</small>
       </li>
       <%- @tags.each do |tag| -%>
-        <%- if tag.tracks.any? -%>
+        <%- if tag.tracks.ordered.any? -%>
           <li class="<%= @tag == tag && 'active' %>">
-            <%= link_to tag.name, tracks_path(group: tag.code) %>
+            <%= link_to tag.name, tag_tracks_path(tag) %>
             <small>
-              <%= link_to 'View', group_path(tag) %>
+              <%= link_to 'View', tag %>
               (<%= tag.tracks.size %>)
             </small>
           </li>
@@ -27,12 +27,16 @@
       <%- @tracks.each_with_index do |track, index| -%>
         <tr>
           <td><%= index + 1 %>.</td>
-          <td><%= link_to track.name, track %></td>
+          <td><%= link_to track.name, @tag ? [@tag, track] : track %></td>
           <td><%= track.tag_name %></td>
           <td><%= format_distance track.distance %></td>
-          <td><%= link_to 'gpx', track.attachment.url %></td>
-          <td><%= link_to 'edit', edit_track_path(track) %></td>
-          <td><%= link_to 'delete', track_path(track), method: :delete, confirm: 'Are you sure?' %></td>
+          <%- if user_signed_in? && @tag -%>
+            <td class='action'><%= link_to image_tag('icon_up.png'), up_tag_tracks_path(@tag, track), method: :put, title: 'Up' %></td>
+            <td class='action'><%= link_to image_tag('icon_down.png'), down_tag_tracks_path(@tag, track), method: :put, title: 'Down' %></td>
+          <%- end -%>
+          <td class='action'><%= link_to image_tag('icon_download.png'), track.attachment.url, title: 'gpx' %></td>
+          <td class='action'><%= link_to image_tag('icon_edit.png'), @tag ? edit_tag_track_path(@tag, track) : edit_track_path(track), title: 'Edit' %></td>
+          <td class='action'><%= link_to image_tag('icon_delete.png'), @tag ? tag_track_path(@tag, track) : track, method: :delete, confirm: 'Are you sure?', title: 'Delete' %></td>
         </tr>
       <%- end -%>
       </tbody>

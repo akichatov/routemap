@@ -1,23 +1,21 @@
 class TracksController < ApplicationController
   before_filter :authenticate_user!, except: [:show]
-  before_filter :find_tag, only: [:index, :create]
+  before_filter :find_tag
   before_filter :find_tags, only: [:index, :create]
   before_filter :find_tracks, only: [:index, :create]
-  before_filter :find_track, only: [:edit, :update, :destroy]
+  before_filter :find_track, only: [:edit, :update, :destroy, :up, :down]
+  before_filter :setup_new_track, only: [:index, :new]
 
   def index
-    @track = Track.new
   end
 
   def new
-    @track = Track.new
   end
 
   def create
     @track = current_user.tracks.build(params[:track])
     if @track.save
-      path = @track.tag ? tracks_path(group: @track.tag.code) : tracks_path
-      redirect_to path, notice: 'Track was successfully created.'
+      redirect_to tag_or_tracks_path, notice: 'Track was successfully created.'
     else
       render action: :index
     end
@@ -29,21 +27,40 @@ class TracksController < ApplicationController
 
   def update
     if @track.update_attributes(params[:track])
-      redirect_to tracks_path, notice: 'Track was successfully updated.'
+      redirect_to tag_or_tracks_path, notice: 'Track was successfully updated.'
     else
       render action: "edit"
     end
   end
 
+  def up
+    move_track(-1)
+    redirect_to tag_or_tracks_path
+  end
+
+  def down
+    move_track(1)
+    redirect_to tag_or_tracks_path
+  end
+
   def destroy
     @track.destroy
-    redirect_to tracks_path
+    redirect_to tag_or_tracks_path
   end
 
 private
 
+  def move_track(offset)
+    track_index = @tag.tracks.ordered.index(@track)
+    previous_track = @tag.tracks.ordered[track_index + offset]
+    if previous_track
+      @track.update_column(:position, track_index + offset)
+      previous_track.update_column(:position, track_index)
+    end
+  end
+
   def find_tag
-    @tag = current_user.tags.find_by_code!(params[:group]) if params[:group]
+    @tag = current_user.tags.find_by_code!(params[:tag_id]) if params[:tag_id]
   end
 
   def find_tags
@@ -51,9 +68,9 @@ private
   end
 
   def find_tracks
-    @all_tracks = current_user.tracks.all
+    @all_tracks = current_user.tracks.tag_ordered
     if @tag
-      @tracks = @tag.tracks
+      @tracks = @tag.tracks.ordered
     else
       @tracks = @all_tracks
     end
@@ -61,6 +78,18 @@ private
 
   def find_track
     @track = current_user.tracks.find_by_code!(params[:id])
+  end
+
+  def tag_or_tracks_path
+    @tag ? tag_tracks_path(@tag) : tracks_path
+  end
+
+  def setup_new_track
+    if @tag
+      @track = @tag.tracks.build(position: @tag.tracks.size)
+    else
+      @track = current_user.tracks.build(position: current_user.tracks.size)
+    end
   end
 
 end

@@ -3,13 +3,13 @@
 <%= javascript "http://api-maps.yandex.ru/2.0-stable/?load=package.full&coordorder=longlat&lang=ru-RU" %>
 <%= javascript 'openlayers/yandex.js', 'elevator.js', 'omap.js', 'map.js' %>
 <%= javascript track_path(@track, format: :js) if @track %>
-<%= javascript group_path(@tag, format: :js) if @tag %>
+<%= javascript tag_path(@tag, format: :js) if @tag %>
 <div id='cover'></div>
 <div id="info">
   <div>
     <strong><%= (@track || @tag).name %></strong>
     <%- if @track && @track.tag -%>
-      <%= link_to @track.tag.name, group_path(@track.tag) %>
+      <%= link_to @track.tag.name, tag_path(@track.tag) %>
     <%- end -%>
     <%- if user_signed_in? -%>
       <small>
@@ -22,7 +22,7 @@
   </div>
   <table id="track_statistic">
     <%- if @tag -%>
-      <%- @tag.tracks.each do |track| -%>
+      <%- @tag.tracks.ordered.each do |track| -%>
         <tr>
           <th><%= link_to track.name, track %></th>
           <td><%= format_distance track.distance %></td>

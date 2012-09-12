@@ -1,4 +1,4 @@
-<%= form_for(@track, html: {id: 'track_form'}) do |f| %>
+<%= form_for(@tag ? [@tag, @track] : @track, html: {id: 'track_form'}) do |f| %>
   <% if @track.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@track.errors.count, "error") %> prohibited this track from being saved:</h2>
@@ -15,6 +15,7 @@
     <%= f.text_field :name, placeholder: 'Name' %>
     <%= f.text_field :tag_name, placeholder: 'Group' %>
     <%= f.file_field :attachment %>
+    <%= f.hidden_field :position %>
     <%= f.submit 'Save' %>
   </div>
 <% end %>

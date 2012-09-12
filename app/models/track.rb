@@ -1,7 +1,7 @@
 class Track < ActiveRecord::Base
   belongs_to :user
   belongs_to :tag
-  attr_accessible :name, :attachment, :tag_name
+  attr_accessible :name, :attachment, :tag_name, :position
   attr_writer :tag_name
 
   has_attached_file :attachment, {
@@ -11,6 +11,9 @@ class Track < ActiveRecord::Base
 
   validates_presence_of :name, :attachment_file_name
   validate :has_points
+
+  scope :ordered, order(:position)
+  scope :tag_ordered, order(:tag_id, :position)
 
   before_create :generate_code
   before_save   :update_tag, :process_data

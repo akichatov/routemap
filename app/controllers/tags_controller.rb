@@ -1,4 +1,4 @@
-class GroupsController < ApplicationController
+class TagsController < ApplicationController
 
   before_filter :find_tag, only: [:show]
 
