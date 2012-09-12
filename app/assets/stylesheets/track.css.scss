@@ -26,7 +26,6 @@
 }
 
 #maps .map {
-  margin-right: 260px;
   margin-bottom: 10px;
 }
 
@@ -54,8 +53,8 @@
 #elevation {
   #elevationGraph {
     overflow-x: auto;
-    &.dragging canvas {
-      cursor: url("http://maps.gstatic.com/mapfiles/openhand_8_8.cur"), default;
+    &.dragging {
+      cursor: move; //url("http://maps.gstatic.com/mapfiles/openhand_8_8.cur"), default;
     }
   }
   #elevationControls {

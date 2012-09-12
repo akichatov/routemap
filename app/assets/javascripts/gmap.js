@@ -3,12 +3,10 @@ var GMap = function(options, map) {
   this.map = map;
   this.colorIndex = -1;
   this.movingDelay = 40;
-  this.latLngs = [];
   this.mapOptions = {
     center: this.getBounds().getCenter(),
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
-  this.gmap = new google.maps.Map($("#gmap").get(0), this.mapOptions);
   this.lines = [];
   this.moveBound = $.proxy(this.move, this);
 };
@@ -22,31 +20,27 @@ GMap.prototype.nextColor = function() {
 };
 
 GMap.prototype.init = function() {
-  this.gmap.fitBounds(this.getBounds());
-  this.initialized = true;
-  this.startSelectionMarker = this.createMarker("Start", null, '/assets/start-flag.png');
-  this.endSelectionMarker = this.createMarker("End", null, '/assets/finish-flag.png');
-};
-
-GMap.prototype.addPoint = function(point) {
-  var line = this.lines[this.lines.length - 1];
-  if(point.first) {
+  this.gmap = new google.maps.Map($("#gmap").get(0), this.mapOptions);
+  for(var i = 0; i < Map.tracks.length; i++) {
+    var track = Map.tracks[i];
     var line = new google.maps.Polyline({
       path: new google.maps.MVCArray(),
       strokeColor: '#' + this.nextColor(),
       strokeOpacity: this.options.strokeOpacity,
       strokeWeight: this.options.strokeWeight
     });
-    this.lines.push(line);
+    for(var j = 0; j < track.points.length; j++) {
+      var point = track.points[j];
+      point.latLng = new google.maps.LatLng(point.lat, point.lon);
+      line.getPath().push(point.latLng);
+      point.gmarker = this.createMarker("Alt:" + point['ele'], point.latLng);
+    }
     line.setMap(this.gmap);
   }
-  point.latLng = new google.maps.LatLng(point.lat, point.lon);
-  if(!point.generated) {
-    line.getPath().push(point.latLng);
-  }
-  this.latLngs.push(point.latLng);
-  point.latLngIndex = this.latLngs.length - 1;
-  point.gmarker = this.createMarker("Alt:" + point['ele'], point.latLng);
+  this.gmap.fitBounds(this.getBounds());
+  this.startSelectionMarker = this.createMarker("Start", null, '/assets/start-flag.png');
+  this.endSelectionMarker = this.createMarker("End", null, '/assets/finish-flag.png');
+  this.initialized = true;
 };
 
 GMap.prototype.createMarker = function(title, position, icon) {
@@ -65,6 +59,9 @@ GMap.prototype.elevationOver = function(point) {
     this.visibleMarker.setVisible(false);
   }
   if(point) {
+    if(!point.gmarker.getMap()) {
+      point.gmarker.setMap(this.gmap);
+    }
     this.visibleMarker = point.gmarker;
     this.visibleMarker.setVisible(true);
     if($("#followMap:checked").size() && !this.endSelectionPoint) {
@@ -103,16 +100,16 @@ GMap.prototype.clearSelection = function(point) {
 };
 
 GMap.prototype.getSelectionBounds = function() {
-  var startIndex = this.startSelectionPoint.latLngIndex;
-  var endIndex = this.endSelectionPoint.latLngIndex;
+  var startIndex = this.startSelectionPoint.fullIndex;
+  var endIndex = this.endSelectionPoint.fullIndex;
   if(startIndex > endIndex) {
     startIndex = endIndex;
-    endIndex = this.startSelectionPoint.latLngIndex;
+    endIndex = this.startSelectionPoint.fullIndex;
   }
-  var latLngs = this.latLngs.slice(startIndex, endIndex);
+  var points = this.map.points.slice(startIndex, endIndex);
   var bounds = new google.maps.LatLngBounds();
-  for(var i = 0; i < latLngs.length; i++) {
-    bounds.extend(latLngs[i]);
+  for(var i = 0; i < points.length; i++) {
+    bounds.extend(points[i].latLng);
   }
   return bounds;
 };

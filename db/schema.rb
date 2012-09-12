@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120907210142) do
+ActiveRecord::Schema.define(:version => 20120909221808) do
 
   create_table "tags", :force => true do |t|
     t.integer  "user_id"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(:version => 20120907210142) do
     t.decimal  "max_lon",                 :precision => 9, :scale => 6
     t.decimal  "min_ele",                 :precision => 7, :scale => 2
     t.decimal  "max_ele",                 :precision => 7, :scale => 2
+    t.binary   "data"
   end
 
   create_table "users", :force => true do |t|

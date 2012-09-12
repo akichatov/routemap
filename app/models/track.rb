@@ -31,6 +31,10 @@ class Track < ActiveRecord::Base
     gpx.points
   end
 
+  def raw_data
+    inflate self.data
+  end
+
 private
 
   def has_points
@@ -58,8 +62,24 @@ private
       self.max_lon = gpx.max[:lon]
       self.min_ele = gpx.min[:ele]
       self.max_ele = gpx.max[:ele]
+      self.data = deflate(gpx.to_json)
       self.processed = true
     end
+  end
+
+  def deflate(string)
+    z = Zlib::Deflate.new
+    dst = z.deflate(string, Zlib::FINISH)
+    z.close
+    dst
+  end
+
+  def inflate(string)
+    zstream = Zlib::Inflate.new
+    buf = zstream.inflate(string)
+    zstream.finish
+    zstream.close
+    buf
   end
 
 end

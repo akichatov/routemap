@@ -27,7 +27,7 @@ class GpxTrack
           elsif reader.name == "ele" and point
             point[:ele] = reader.read_string.to_f
           elsif reader.name == "time" and point
-            point[:time] = DateTime.parse(reader.read_string)
+            point[:time] = DateTime.parse(reader.read_string).to_i
           end
         elsif reader.node_type == LibXML::XML::Reader::TYPE_END_ELEMENT
           if reader.name == "trkpt" and point
@@ -47,12 +47,12 @@ class GpxTrack
     current = @points.first
     result = 0.0
     @points.each do |point|
-      delta = Geo.distance(current[:lat], current[:lon], point[:lat], point[:lon])
+      delta = Geo.distance(current[:lat], current[:lon], point[:lat], point[:lon]).round(2)
       result += delta
       point[:dist] = delta
       current = point
     end
-    result * UNIT_FACTOR[options[:units] || :meters]
+    result.round(2) * UNIT_FACTOR[options[:units] || :meters]
   end
 
 private

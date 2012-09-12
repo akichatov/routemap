@@ -1,6 +1,7 @@
+<%= javascript "http://www.openlayers.org/api/OpenLayers.js" %>
 <%= javascript "http://maps.googleapis.com/maps/api/js?key=#{MapApiKeys::GOOGLE}&sensor=false" %>
-<%= javascript "http://api-maps.yandex.ru/1.1/index.xml?loadByRequire=1&key=#{MapApiKeys::YANDEX}" %>
-<%= javascript 'elevator.js', 'gmap.js', 'ymap.js', 'map.js' %>
+<%= javascript "http://api-maps.yandex.ru/2.0-stable/?load=package.full&coordorder=longlat&lang=ru-RU" %>
+<%= javascript 'openlayers/yandex.js', 'elevator.js', 'omap.js', 'map.js' %>
 <%= javascript track_path(@track, format: :js) if @track %>
 <%= javascript group_path(@tag, format: :js) if @tag %>
 <div id='cover'></div>
@@ -63,20 +64,11 @@
       <th>Elevation end:</th>
       <td><span id="selectionEndEle"></span> m</td>
     </tr>
-    <tr>
-      <th colspan='2' class='divider'>&nbsp;</th>
-    </tr>
-    <tr>
-      <th rowspan='2'>Type:</th>
-      <td><label><input type="radio" name="map_type" id="gmap_toggle" checked="checked" value="gmap" /> Google</label></td>
-    </tr>
-    <tr>
-      <td><label><input type="radio" name="map_type" id="ymap_toggle"  value="ymap" /> Yandex</label></td>
-    </tr>
   </table>  
 </div>
 <div id="maps">
-  <div id="gmap" class="map"></div>
+  <div id="omap" class="map"></div>
+  <div id="gmap" class="map" style="display: none;"></div>
   <div id="ymap" class="map" style="display: none;"></div>
 </div>
 <div style="clear: both;"></div>

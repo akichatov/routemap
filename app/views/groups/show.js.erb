@@ -1,6 +1,6 @@
 Map.tracks = [
   <%- @tag.tracks.each do |track| -%>
-    <%= track.gpx.to_json.html_safe %>,
+    <%= track.raw_data.html_safe %>,
   <%- end -%>
   null
 ];
