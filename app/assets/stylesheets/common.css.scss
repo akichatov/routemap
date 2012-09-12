@@ -22,10 +22,10 @@
       td {
         padding: 0 10px;
       }
-      td.action {
+      td.action * {
         visibility: hidden;
       }
-      tr:hover td.action {
+      tr:hover td.action * {
         visibility: visible;
       }
     }
