@@ -27,7 +27,7 @@
       <%- @tracks.each_with_index do |track, index| -%>
         <tr>
           <td><%= index + 1 %>.</td>
-          <td><%= link_to track.name, @tag ? [@tag, track] : track %></td>
+          <td><%= link_to track.name, track %></td>
           <td><%= track.tag_name %></td>
           <td><%= format_distance track.distance %></td>
           <%- if user_signed_in? && @tag -%>
