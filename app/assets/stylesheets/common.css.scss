@@ -15,20 +15,20 @@
   }
 }
 #tracks {
-  width: 802px;
 
   #track_list {
-    float: right;
-    width: 550px;
     table {
       margin-left: 20px;
-      width: 100%;
+      td {
+        padding: 0 10px;
+      }
     }
   }
 
   #tag_list {
     float: left;
     width: 250px;
+    margin-right: 20px;
     ul {
       margin: 0;
       padding: 0;
