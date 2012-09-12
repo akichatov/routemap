@@ -170,3 +170,39 @@ OMap.prototype.getBounds = function() {
   bounds.extend(new OpenLayers.LonLat(this.map.max.lon, this.map.max.lat).transform(this.fromProjection, this.omap.getProjectionObject()));
   return bounds;
 };
+
+// Override modifyAlphaImageDiv function so it doen't reload existent image
+OpenLayers.Util.modifyAlphaImageDiv = function(div, id, px, sz, imgURL, 
+                                               position, border, sizing, 
+                                               opacity) {
+
+    OpenLayers.Util.modifyDOMElement(div, id, px, sz, position,
+                                     null, null, opacity);
+
+    var img = div.childNodes[0];
+
+    if (imgURL && img.src.indexOf(imgURL) < 0) {
+        img.src = imgURL;
+    }
+    OpenLayers.Util.modifyDOMElement(img, div.id + "_innerImage", null, sz, 
+                                     "relative", border);
+    
+    if (OpenLayers.Util.alphaHack()) {
+        if(div.style.display != "none") {
+            div.style.display = "inline-block";
+        }
+        if (sizing == null) {
+            sizing = "scale";
+        }
+        
+        div.style.filter = "progid:DXImageTransform.Microsoft" +
+                           ".AlphaImageLoader(src='" + img.src + "', " +
+                           "sizingMethod='" + sizing + "')";
+        if (parseFloat(div.style.opacity) >= 0.0 && 
+            parseFloat(div.style.opacity) < 1.0) {
+            div.style.filter += " alpha(opacity=" + div.style.opacity * 100 + ")";
+        }
+
+        img.style.filter = "alpha(opacity=0)";
+    }
+};
