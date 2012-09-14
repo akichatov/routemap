@@ -146,6 +146,7 @@ OMap.prototype.clearSelection = function(point) {
   this.markers.removeMarker(this.startMarker);
   this.markers.removeMarker(this.endMarker);
   this.omap.zoomToExtent(this.abounds);
+  // this.omap.zoomIn();
 };
 
 OMap.prototype.getSelectionBounds = function() {

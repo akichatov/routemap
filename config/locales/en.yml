@@ -1,5 +1,58 @@
-# Sample localization file for English. Add more files in this directory for other locales.
-# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
-
 en:
-  hello: "Hello world"
+  views:
+    main:
+      labels:
+        signout: 'Sign out'
+        signin: 'sign in with Google'
+
+    menu:
+      tracks: Tracks
+      new_track: Upload
+      edit_track: Edit
+      delete_track: Delete
+
+    units:
+      metre: 'm'
+      kilometre: 'km'
+      kilometre_per_hour: 'km/h'
+
+    tracks:
+      messages:
+        created: 'Track was successfully created.'
+        updated: 'Track was successfully updated.'
+        deleted: 'Track was successfully deleted.'
+
+      index:
+        labels:
+          groups: 'Groups'
+          tracks: 'Tracks'
+          all: 'All'
+          view_group: View group tracks
+          up: 'Move up'
+          down: 'Move down'
+          delete: 'Delete'
+          edit: 'Edit'
+          download: 'GPX'
+
+      show:
+        labels:
+          time: 'Time'
+          ele: 'Elevation'
+          speed: 'Speed'
+          dist: 'Distance'
+          min_alt: Altitude min
+          max_alt: Altitude max
+          climb: Climb
+          descent: Descent
+          selection: Selection
+          alt_start: Altitude start
+          alt_end: Altitude end
+
+      new:
+        title: New track
+      edit:
+        title: Edit track
+      form:
+        name: Name
+        group: Group
+        save: Save

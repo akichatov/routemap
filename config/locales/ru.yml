@@ -1,0 +1,58 @@
+ru:
+  views:
+    main:
+      labels:
+        signout: 'Выйти'
+        signin: 'Войти с помощью Google'
+
+    menu:
+      tracks: Треки
+      new_track: Загрузить
+      edit_track: Редактировать
+      delete_track: Удалить
+
+    units:
+      metre: 'м'
+      kilometre: 'км'
+      kilometre_per_hour: 'км/ч'
+
+    tracks:
+      messages:
+        created: 'Трек создан.'
+        updated: 'Трек сохранен.'
+        deleted: 'Трек удален.'
+
+      index:
+        labels:
+          groups: 'Группы'
+          tracks: 'Треки'
+          all: 'Все'
+          view_group: Открыть все треки группы
+          up: 'Переместить вверх'
+          down: 'Переместить вниз'
+          delete: 'Удалить'
+          edit: 'Редактировать'
+          download: 'GPX'
+
+      show:
+        labels:
+          time: 'Время'
+          ele: 'Высота'
+          speed: 'Скорость'
+          dist: 'Расстояние'
+          min_alt: Высота мин.
+          max_alt: Высота макс.
+          climb: Подъем
+          descent: Спуск
+          selection: Выделение
+          alt_start: Высота начало
+          alt_end: Высота конец
+
+      new:
+        title: Новый трек
+      edit:
+        title: Редактировать трек
+      form:
+        name: Название
+        group: Группа
+        save: Сохранить

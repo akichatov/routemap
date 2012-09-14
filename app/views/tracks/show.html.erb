@@ -7,62 +7,54 @@
 <div id='cover'></div>
 <div id="info">
   <div>
-    <strong><%= (@track || @tag).name %></strong>
+    <h3><%= (@track || @tag).name %></h3>
     <%- if @track && @track.tag -%>
       <%= link_to @track.tag.name, tag_path(@track.tag) %>
-    <%- end -%>
-    <%- if user_signed_in? -%>
-      <small>
-        <%- if @track -%>
-          <%= link_to 'Edit', edit_track_path(@track) %> |
-        <%- end -%>
-        <%= link_to 'All tracks', tracks_path %>
-      </small>
     <%- end -%>
   </div>
   <table id="track_statistic">
     <%- if @tag -%>
       <%- @tag.tracks.ordered.each do |track| -%>
         <tr>
-          <th><%= link_to track.name, track %></th>
+          <th><div><%= link_to track.name, track %></div></th>
           <td><%= format_distance track.distance %></td>
         </tr>
       <%- end -%>
     <%- end -%>
     <tr>
-      <th>Distance:</th>
-      <td><span id="distance_km"></span> km</td>
+      <th><%= t('views.tracks.show.labels.dist') %>:</th>
+      <td><span id="distance_km"></span> <%= t('views.units.kilometre') %></td>
     </tr>
     <tr>
-      <th>Altitude min:</th>
-      <td><span id="ele_min"></span> m</td>
+      <th><%= t('views.tracks.show.labels.min_alt') %>:</th>
+      <td><span id="ele_min"></span> <%= t('views.units.metre') %></td>
     </tr>
     <tr>
-      <th>Altitude max:</th>
-      <td><span id="ele_max"></span> m</td>
+      <th><%= t('views.tracks.show.labels.max_alt') %>:</th>
+      <td><span id="ele_max"></span> <%= t('views.units.metre') %></td>
     </tr>
     <tr>
-      <th>Climb:</th>
-      <td><span id="climb"></span> m</td>
+      <th><%= t('views.tracks.show.labels.climb') %>:</th>
+      <td><span id="climb"></span> <%= t('views.units.metre') %></td>
     </tr>
     <tr>
-      <th>Descent:</th>
-      <td><span id="descent"></span> m</td>
+      <th><%= t('views.tracks.show.labels.descent') %>:</th>
+      <td><span id="descent"></span> <%= t('views.units.metre') %></td>
     </tr>
     <tr>
-      <th colspan='2' class='divider'>Selection:</th>
+      <th colspan='2' class='divider'><%= t('views.tracks.show.labels.selection') %>:</th>
     </tr>
     <tr>
-      <th>Distance:</th>
-      <td><span id="selectionDistance"></span> m</td>
+      <th><%= t('views.tracks.show.labels.dist') %>:</th>
+      <td><span id="selectionDistance"></span> <%= t('views.units.metre') %></td>
     </tr>
     <tr>
-      <th>Elevation start:</th>
-      <td><span id="selectionStartEle"></span> m</td>
+      <th><%= t('views.tracks.show.labels.alt_start') %>:</th>
+      <td><span id="selectionStartEle"></span> <%= t('views.units.metre') %></td>
     </tr>
     <tr>
-      <th>Elevation end:</th>
-      <td><span id="selectionEndEle"></span> m</td>
+      <th><%= t('views.tracks.show.labels.alt_end') %>:</th>
+      <td><span id="selectionEndEle"></span> <%= t('views.units.metre') %></td>
     </tr>
   </table>  
 </div>
@@ -75,15 +67,15 @@
 <div id="pointInfo">
   <table>
     <tr>
-      <th>Time:</th>
+      <th><%= t('views.tracks.show.labels.time') %>:</th>
       <td><div id="time"></div></td>
-      <th>Elevation:</th>
-      <td><div><span id="pointEle"></span> m</div></td>
-      <th>Speed:</th>
-      <td><div><span id="pointSpeed"></span> km/h</div></td>
-      <th rowspan='2'>Distance:</th>
-      <td><div><span id="pointMeters"></span> m</div></td>
-      <td><div><span id="pointKms"></span> km</div></td>
+      <th><%= t('views.tracks.show.labels.ele') %>:</th>
+      <td><div><span id="pointEle"></span> <%= t('views.units.metre') %></div></td>
+      <th><%= t('views.tracks.show.labels.speed') %>:</th>
+      <td><div><span id="pointSpeed"></span> <%= t('views.units.kilometre_per_hour') %></div></td>
+      <th rowspan='2'><%= t('views.tracks.show.labels.dist') %>:</th>
+      <td><div><span id="pointMeters"></span> <%= t('views.units.metre') %></div></td>
+      <td><div><span id="pointKms"></span> <%= t('views.units.kilometre') %></div></td>
     </tr>
   </table>
 </div>

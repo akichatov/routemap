@@ -15,9 +15,10 @@ class TracksController < ApplicationController
   def create
     @track = current_user.tracks.build(params[:track])
     if @track.save
-      redirect_to tag_or_tracks_path, notice: 'Track was successfully created.'
+      @tag = @track.tag
+      redirect_to tag_or_tracks_path, notice: t('views.tracks.messages.created')
     else
-      render action: :index
+      render action: :new
     end
   end
 
@@ -27,7 +28,7 @@ class TracksController < ApplicationController
 
   def update
     if @track.update_attributes(params[:track])
-      redirect_to tag_or_tracks_path, notice: 'Track was successfully updated.'
+      redirect_to tag_or_tracks_path, notice: t('views.tracks.messages.updated')
     else
       render action: "edit"
     end
@@ -45,7 +46,7 @@ class TracksController < ApplicationController
 
   def destroy
     @track.destroy
-    redirect_to tag_or_tracks_path
+    redirect_to tag_or_tracks_path, notice: t('views.tracks.messages.deleted')
   end
 
 private
