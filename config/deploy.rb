@@ -1,14 +1,14 @@
-set :stages, %w(aak)
-set :default_stage, "aak"
-set :keep_releases, 2
-require 'capistrano/ext/multistage'
 require 'rvm/capistrano'
 require 'bundler/capistrano'
+require 'capistrano/ext/multistage'
 load "deploy/assets"
 
+set :stages, %w(aak)
+set :default_stage, :aak
+set :rails_env, :aak
+set :keep_releases, 2
 set :application, "RouteMap"
-
-# Use Git
+set :deploy_to, "/var/www/apps/routemap"
 set :scm, :git
 set :repository, "git://github.com/akichatov/routemap.git"
 set :use_sudo, false

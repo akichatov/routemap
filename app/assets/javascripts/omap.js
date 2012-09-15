@@ -99,7 +99,7 @@ OMap.prototype.addPoint = function(point) {
 };
 
 OMap.prototype.getTolerance = function() {
-  var tolerance = (this.omap.getNumZoomLevels() - this.omap.getZoom() - 1) * 2;
+  var tolerance = Math.pow(this.omap.getNumZoomLevels() - this.omap.getZoom() - 1, 2);
   if(tolerance < 0) {
     tolerance = 0;
   }
@@ -107,7 +107,6 @@ OMap.prototype.getTolerance = function() {
 };
 
 OMap.prototype.simplifyByZoom = function() {
-  this.omap.getNumZoomLevels();
   for(var i = 0; i < this.lines.length; i++) {
     var line = this.lines[i];
     line.vectorLayer.removeFeatures(line.vectorLayer.features);

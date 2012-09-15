@@ -7,6 +7,6 @@ test:
 production:
   google: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s
 
-production:
-  aak: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s
+aak:
+  google: AIzaSyBpxmaCEHjtoxLQAaeImj77gYV1CO9n54s
 

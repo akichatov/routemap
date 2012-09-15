@@ -123,7 +123,7 @@ Map.prototype.getSpeed = function(point) {
 
 $(function() {
   $("#maps .map").height($(window).height() - 280);
-  $("#maps .map").width($(window).width() - 260);
+  $("#maps .map").width($(window).width() - 280);
   var map = new Map();
   $("#distance_km").html((map.tracks_distance / 1000).toFixed(2));
   $("#ele_min").html(map.min.ele);

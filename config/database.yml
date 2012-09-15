@@ -49,4 +49,3 @@ aak:
   pool: 5
   username: root
   password: epyfnm
-  socket: /tmp/mysql.sock
