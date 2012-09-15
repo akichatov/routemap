@@ -5,12 +5,13 @@ gem 'rails', '3.2.1'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-group :development do
+group :development, :aak do
   gem 'mysql2'
+  gem 'unicorn'
 end
-gem 'thin'
 
 group :production do
+  gem 'thin'
   gem 'pg'
   gem 'aws-s3'
   gem 'aws-sdk'
@@ -29,7 +30,7 @@ group :assets do
   gem 'coffee-rails', '~> 3.2.1'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer'
+  gem 'therubyracer'
 
   gem 'uglifier', '>= 1.0.3'
 end
@@ -46,7 +47,12 @@ gem 'jquery-rails'
 # gem 'unicorn'
 
 # Deploy with Capistrano
-# gem 'capistrano'
+group :development do
+  gem 'capistrano'
+  gem "capistrano-ext"
+  gem 'rvm-capistrano'
+  gem 'capistrano-unicorn'
+end
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
