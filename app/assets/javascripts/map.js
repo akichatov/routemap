@@ -12,7 +12,7 @@ var Map = function() {
   this.initTracks();
   this.omap = new OMap(this.options, this);
   this.currentMap = this.omap;
-  this.elevator = new Elevator();
+  this.elevator = new Elevator('speed');
   this.metersPerPixel = this.tracks_distance / this.elevator.visibleWidth;
   for(var i = 0; i < Map.tracks.length; i++) {
     this.initTrack(Map.tracks[i], i);
@@ -54,8 +54,7 @@ Map.prototype.initTrack = function(track, trackIndex) {
     var point = track.points[i];
     point.first = i == 0;
     point.track = track;
-    dist += point.dist
-    point.fullDist = dist;
+    point.fdist += dist;
     point.index = i;
     point.time = new Date(point.time * 1000).toUTCString();
     point.fullIndex = this.points.length;
@@ -70,9 +69,9 @@ Map.prototype.elevationOver = function(event, point) {
   if(point) {
     $("#time").html(point.time);
     $("#pointEle").html(point.ele.toFixed(2));
-    $("#pointMeters").html(point.fullDist.toFixed(2));
-    $("#pointKms").html((point.fullDist / 1000).toFixed(2));
-    $("#pointSpeed").html(this.getSpeed(point));
+    $("#pointMeters").html(point.fdist.toFixed(2));
+    $("#pointKms").html((point.fdist / 1000).toFixed(2));
+    $("#pointSpeed").html(point.speed);
   }
   this.doElevationOver(event, point);
   // this.elevationOverTimeout = setTimeout($.proxy(this.doElevationOver, this, event, point), 10);
@@ -101,24 +100,7 @@ Map.prototype.clearSelection = function(event, point) {
 };
 
 Map.prototype.getSelectionDistance = function() {
-  return Math.abs(this.startSelectionPoint.fullDist - this.endSelectionPoint.fullDist);
-};
-
-Map.prototype.getSpeed = function(point) {
-  var time = 0;
-  var dist = 0;
-  var i = 1;
-  var previous = point.track.points[point.index - i];
-  while(previous && time < 1) {
-    time += (Date.parse(point.time) - Date.parse(previous.time)) / 1000;
-    dist = point.fullDist - previous.fullDist;
-    i++;
-    previous = point.track.points[point.index - i];
-  }
-  if(time > 0) {
-    return ((dist / 1000) / (time / 3600)).toFixed(2);
-  }
-  return 0.0;
+  return Math.abs(this.startSelectionPoint.fdist - this.endSelectionPoint.fdist);
 };
 
 $(function() {

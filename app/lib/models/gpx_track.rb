@@ -50,6 +50,7 @@ class GpxTrack
       delta = Geo.distance(current[:lat], current[:lon], point[:lat], point[:lon]).round(2)
       result += delta
       point[:dist] = delta
+      point[:fdist] = result.round(2)
       current = point
     end
     result.round(2) * UNIT_FACTOR[options[:units] || :meters]
@@ -71,15 +72,33 @@ private
     end
   end
 
-  def calculate_climb_descent
+  def calculate_climb_descent_speed
     previous_point = @points.first
     @climb = @descent = 0.0
-    @points.each do |point|
+    @points.each_with_index do |point, index|
       delta_height = point[:ele] - previous_point[:ele]
       @climb += delta_height if delta_height > 0
       @descent += delta_height.abs if delta_height < 0
+      point[:speed] = calculate_speed(point, index)
       previous_point = point
     end
+  end
+
+  def calculate_speed(point, index)
+    time = 0
+    dist = 0
+    i = 1
+    previous = @points[index - i]
+    while previous && time < 3
+      time += (point[:time] - previous[:time])
+      dist = point[:fdist] - previous[:fdist]
+      i += 1
+      previous = @points[index - i]
+    end
+    if time > 0
+      return ((dist / 1000.0) / (time / 3600.0)).round(2)
+    end
+    return 0.0
   end
 
   def process_track
@@ -88,7 +107,7 @@ private
     eles = @points.map{|p| p[:ele]}
     @min = {lat: lats.min, lon: lons.min, ele: eles.min}
     @max = {lat: lats.max, lon: lons.max, ele: eles.max}
-    calculate_climb_descent
+    calculate_climb_descent_speed
   end
 
 end

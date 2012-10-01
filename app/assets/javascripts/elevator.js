@@ -1,4 +1,5 @@
-function Elevator() {
+function Elevator(field) {
+  this.yattr = 'ele';
   this.data = [];
   this.visiblePoints = [];
   this.height = 200;
@@ -20,9 +21,12 @@ function Elevator() {
   $("body").mouseup($.proxy(this.bodyMouseUp, this));
   $("#elevationZoomIn").click($.proxy(this.zoom, this, 1));
   $("#elevationZoomOut").click($.proxy(this.zoom, this, -1));
+  $("#showSpeed").click($.proxy(this.showSpeed, this));
+  $("#showEle").click($.proxy(this.showEle, this));
 }
 
 Elevator.prototype.init = function() {
+  this.calcMinMax();
   var zeroCount = Math.floor((this.maxY - this.minY) / 10).toString().length
   var factor = "1";
   for(var i = 0; i < zeroCount; i++) {
@@ -36,14 +40,31 @@ Elevator.prototype.init = function() {
   this.draw();
 };
 
+Elevator.prototype.showSpeed = function() {
+  this.yattr = 'speed';
+  this.init();
+}
+
+Elevator.prototype.showEle = function() {
+  this.yattr = 'ele';
+  this.init();
+}
+
 Elevator.prototype.addPoint = function(point) {
   this.data.push({point: point});
-  var valueX = point.fullDist;
-  var valueY = point.ele;
-  this.minX = this.minX && this.minX < valueX ? this.minX : valueX;
-  this.maxX = this.maxX && this.maxX > valueX ? this.maxX : valueX;
-  this.minY = this.minY && this.minY < valueY ? this.minY : valueY;
-  this.maxY = this.maxY && this.maxY > valueY ? this.maxY : valueY;
+};
+
+Elevator.prototype.calcMinMax = function() {
+  this.minX = this.maxX = this.minY = this.maxY = null;
+  for(var i = 0; i < this.data.length; i++) {
+    var point = this.data[i].point;
+    var valueX = point.fdist;
+    var valueY = point[this.yattr];
+    this.minX = this.minX && this.minX < valueX ? this.minX : valueX;
+    this.maxX = this.maxX && this.maxX > valueX ? this.maxX : valueX;
+    this.minY = this.minY && this.minY < valueY ? this.minY : valueY;
+    this.maxY = this.maxY && this.maxY > valueY ? this.maxY : valueY;
+  }
 };
 
 Elevator.prototype.setupWidth = function() {
@@ -75,8 +96,8 @@ Elevator.prototype.processScreenPoints = function() {
 }
 
 Elevator.prototype.getScreenPoint = function(datum) {
-  var x = Math.ceil(datum.point.fullDist / this.factorX + this.padding.left);
-  var y = this.height - Math.round((datum.point.ele - this.startY) * this.factorY) - this.padding.bottom;
+  var x = Math.ceil(datum.point.fdist / this.factorX + this.padding.left);
+  var y = this.height - Math.round((datum.point[this.yattr] - this.startY) * this.factorY) - this.padding.bottom;
   return {x: x, y: y};
 }
 
@@ -191,9 +212,9 @@ Elevator.prototype.clearSelection = function(x) {
 };
 
 Elevator.prototype.getLabel = function(datum) {
-  var value = datum.point.ele + '';
-  var parts = value.split('.');
-  return parts[0] + (parts[1] ? '.' + parts[1].substring(0, 2) : '') + ' m';
+  return datum.point[this.yattr] + '';
+  // var parts = value.split('.');
+  // return parts[0] + (parts[1] ? '.' + parts[1].substring(0, 2) : '');
 };
 
 Elevator.prototype.clear = function() {
