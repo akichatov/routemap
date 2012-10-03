@@ -306,6 +306,7 @@ Elevator.prototype.drawGraphTemplate = function() {
   this.contextTemplate.clip();
   this.contextTemplate.fillStyle = "rgba(240, 240, 240, 1)";
   this.contextTemplate.fillRect(0, 0, this.width, this.height - 1);
+  this.contextTemplate.lineWidth = 2;
   this.contextTemplate.stroke();
 };
 
