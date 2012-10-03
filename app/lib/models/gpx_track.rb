@@ -1,7 +1,8 @@
 require 'libxml'
 class GpxTrack
-
   UNIT_FACTOR = { meters: 1.0, kms: 0.001 }
+  SPEED_TIME_LIMIT_SEC = 5
+
   attr_reader :min, :max, :points, :distance, :climb, :descent, :name
 
   def self.parse(track)
@@ -89,7 +90,7 @@ private
     dist = 0
     i = 1
     previous = @points[index - i]
-    while previous && time < 3
+    while previous && time < SPEED_TIME_LIMIT_SEC
       time += (point[:time] - previous[:time])
       dist = point[:fdist] - previous[:fdist]
       i += 1

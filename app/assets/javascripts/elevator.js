@@ -285,21 +285,21 @@ Elevator.prototype.drawGraphTemplate = function() {
   this.contextTemplate.restore();
   this.contextTemplate.clearRect(this.padding.left, 0, this.width - this.padding.left - this.padding.right, this.height - 1);
   this.visiblePoints = [];
-  var previous = this.data[0];
+  var previous = datum = this.data[0];
   this.visiblePoints[previous.screen.x] = previous;
   this.contextTemplate.beginPath();
   this.contextTemplate.moveTo(this.padding.left, this.height - this.padding.bottom);
-  for(var i = 0; i < this.data.length; i++) {
-    var datum = this.data[i];
+  for(var i = 1; i < this.data.length; i+=2) {
+    datum = this.data[i];
+    previous = this.data[i - 1];
     this.contextTemplate.quadraticCurveTo(
       previous.screen.x, previous.screen.y,
       datum.screen.x, datum.screen.y
     );
     this.visiblePoints[datum.screen.x] = datum;
-    previous = datum;
   }
   this.contextTemplate.quadraticCurveTo(
-    previous.screen.x, previous.screen.y,
+    datum.screen.x, datum.screen.y,
     this.width - this.padding.right, this.height - this.padding.bottom
   );
   this.contextTemplate.save();
