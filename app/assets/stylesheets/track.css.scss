@@ -58,6 +58,9 @@
 
 #elevation {
   #elevationGraph {
+    #canvasTemplateElement {
+      display: none;
+    }
     overflow-x: auto;
     &.dragging {
       cursor: move; //url("http://maps.gstatic.com/mapfiles/openhand_8_8.cur"), default;

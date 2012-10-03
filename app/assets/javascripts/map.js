@@ -12,7 +12,7 @@ var Map = function() {
   this.initTracks();
   this.omap = new OMap(this.options, this);
   this.currentMap = this.omap;
-  this.elevator = new Elevator('speed');
+  this.elevator = new Elevator();
   this.metersPerPixel = this.tracks_distance / this.elevator.visibleWidth;
   for(var i = 0; i < Map.tracks.length; i++) {
     this.initTrack(Map.tracks[i], i);
