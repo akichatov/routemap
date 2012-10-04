@@ -15,6 +15,8 @@ en:
       metre: 'm'
       kilometre: 'km'
       kilometre_per_hour: 'km/h'
+      hour: 'h'
+      minute: 'm'
 
     tracks:
       messages:
@@ -47,6 +49,10 @@ en:
           selection: Selection
           alt_start: Altitude start
           alt_end: Altitude end
+          total_time: Time total
+          motion_time: Time moving
+          max_speed: Speed max
+          avg_motion_speed: Speed moving avg.
 
       new:
         title: New track

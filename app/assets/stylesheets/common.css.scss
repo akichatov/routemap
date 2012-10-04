@@ -78,6 +78,7 @@ a:link, a:visited {
       }
       td.distance {
         text-align: right;
+        white-space: nowrap;
       }
       td.action * {
         visibility: hidden;

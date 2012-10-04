@@ -1,9 +1,11 @@
 require 'libxml'
 class GpxTrack
   UNIT_FACTOR = { meters: 1.0, kms: 0.001 }
-  SPEED_TIME_LIMIT_SEC = 5
+  SPEED_TIME_LIMIT_SEC = 3
+  MOTION_SPEED_LIMIT = 0.33
 
-  attr_reader :min, :max, :points, :distance, :climb, :descent, :name
+  attr_reader :min, :max, :points, :distance, :climb, :descent, :name,
+              :total_time, :motion_time, :stopped_time, :avg_speed, :max_speed, :avg_motion_speed
 
   def self.parse(track)
     if track.new_record?
@@ -62,27 +64,39 @@ private
   def initialize(points, track)
     @points = points
     @name = track.name
-    @distance = distance_haversine
-    if track.processed
-      @climb = track.climb
-      @descent = track.descent
-      @min = {lat: track.min_lat, lon: track.min_lon, ele: track.min_ele}
-      @max = {lat: track.max_lat, lon: track.max_lon, ele: track.max_ele}
-    else
-      process_track
-    end
+    init_track_data
   end
 
-  def calculate_climb_descent_speed
+  def init_track_data
+    @distance = distance_haversine
+    lats = @points.map{|p| p[:lat]}
+    lons = @points.map{|p| p[:lon]}
+    eles = @points.map{|p| p[:ele]}
+    @min = {lat: lats.min, lon: lons.min, ele: eles.min}
+    @max = {lat: lats.max, lon: lons.max, ele: eles.max}
+    @total_time = @points.last[:time] - @points.first[:time]
+
     previous_point = @points.first
     @climb = @descent = 0.0
+    @motion_time = @stopped_time = 0
     @points.each_with_index do |point, index|
       delta_height = point[:ele] - previous_point[:ele]
       @climb += delta_height if delta_height > 0
       @descent += delta_height.abs if delta_height < 0
       point[:speed] = calculate_speed(point, index)
+      if point[:speed] > MOTION_SPEED_LIMIT
+        @motion_time += point[:time] - previous_point[:time]
+      else
+        @stopped_time += point[:time] - previous_point[:time]
+      end
       previous_point = point
     end
+
+    speeds = @points.map{|p| p[:speed]}
+    @avg_speed = ((@distance / 1000.0) / (@total_time / 3600.0)).round(2)
+    @max_speed = speeds.max
+    motion_speeds = speeds.select{|s| s > MOTION_SPEED_LIMIT }
+    @avg_motion_speed = motion_speeds.inject(:+) / motion_speeds.size
   end
 
   def calculate_speed(point, index)
@@ -100,15 +114,6 @@ private
       return ((dist / 1000.0) / (time / 3600.0)).round(2)
     end
     return 0.0
-  end
-
-  def process_track
-    lats = @points.map{|p| p[:lat]}
-    lons = @points.map{|p| p[:lon]}
-    eles = @points.map{|p| p[:ele]}
-    @min = {lat: lats.min, lon: lons.min, ele: eles.min}
-    @max = {lat: lats.max, lon: lons.max, ele: eles.max}
-    calculate_climb_descent_speed
   end
 
 end

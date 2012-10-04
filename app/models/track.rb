@@ -1,13 +1,14 @@
 class Track < ActiveRecord::Base
   belongs_to :user
   belongs_to :tag
-  attr_accessible :name, :attachment, :tag_name, :position
-  attr_writer :tag_name
-
+  has_one :statistic, dependent: :destroy
   has_attached_file :attachment, {
     hash_data: ':class/:attachment/:id/:code',
     hash_secret: 'track_attachment_secret'
   }.merge(TRACK_ATTACHMENT_OPTS)
+
+  attr_accessible :name, :attachment, :tag_name, :position
+  attr_writer :tag_name
 
   validates_presence_of :name, :attachment_file_name
   validate :has_points
@@ -56,17 +57,11 @@ private
 
   def process_data
     unless self.processed
-      self.distance = gpx.distance
-      self.climb = gpx.climb
-      self.descent = gpx.descent
-      self.min_lat = gpx.min[:lat]
-      self.min_lon = gpx.min[:lon]
-      self.max_lat = gpx.max[:lat]
-      self.max_lon = gpx.max[:lon]
-      self.min_ele = gpx.min[:ele]
-      self.max_ele = gpx.max[:ele]
+      self.statistic ||= Statistic.new(track: self)
+      self.statistic.init_from_track
       self.data = deflate(gpx.to_json)
       self.processed = true
+      self.statistic.save
     end
   end
 
