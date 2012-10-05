@@ -59,6 +59,7 @@ private
     unless self.processed
       self.statistic ||= Statistic.new(track: self)
       self.statistic.init_from_track
+      self.timezone = gpx.timezone
       self.data = deflate(gpx.to_json)
       self.processed = true
       self.statistic.save

@@ -56,7 +56,7 @@ Map.prototype.initTrack = function(track, trackIndex) {
     point.track = track;
     point.fdist += dist;
     point.index = i;
-    point.time = new Date(point.time * 1000).toUTCString();
+    point.time = new timezoneJS.Date(point.time * 1000, track.timezone).toString();
     point.fullIndex = this.points.length;
     this.points.push(point);
     this.omap.addPoint(point);
@@ -103,6 +103,9 @@ Map.prototype.getSelectionDistance = function() {
   return Math.abs(this.startSelectionPoint.fdist - this.endSelectionPoint.fdist);
 };
 
+timezoneJS.timezone.zoneFileBasePath = '/tz';
+timezoneJS.timezone.defaultZoneFile = ['europe', 'northamerica'];
+timezoneJS.timezone.init({ async: false });
 $(function() {
   $("#maps .map").height($(window).height() - 280);
   $("#maps .map").width($(window).width() - 280);

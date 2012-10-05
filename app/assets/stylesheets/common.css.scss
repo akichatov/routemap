@@ -80,6 +80,9 @@ a:link, a:visited {
         text-align: right;
         white-space: nowrap;
       }
+      td.track_date {
+        white-space: nowrap;
+      }
       td.action * {
         visibility: hidden;
       }

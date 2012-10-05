@@ -1,18 +1,23 @@
 <%= javascript "http://www.openlayers.org/api/OpenLayers.js" %>
 <%= javascript "http://maps.googleapis.com/maps/api/js?key=#{MapApiKeys::GOOGLE}&sensor=false" %>
 <%= javascript "http://api-maps.yandex.ru/2.0-stable/?load=package.full&coordorder=longlat&lang=ru-RU" %>
-<%= javascript 'openlayers/yandex.js', 'elevator.js', 'omap.js', 'map.js' %>
+<%= javascript 'timezone-js/date.js', 'openlayers/yandex.js', 'elevator.js', 'omap.js', 'map.js' %>
 <%= javascript track_path(@track, format: :js) if @track %>
 <%= javascript tag_path(@tag, format: :js) if @tag %>
 <div id='cover'></div>
 <div id="info">
-  <div>
-    <h3><%= (@track || @tag).name %></h3>
-    <%- if @track && @track.tag -%>
-      <%= link_to @track.tag.name, tag_path(@track.tag) %>
-    <%- end -%>
-  </div>
+  <h3><%= (@track || @tag).name %></h3>
   <table id="track_statistic">
+    <%- if @track && @track.tag -%>
+      <tr>
+        <td colspan="2"><%= link_to @track.tag.name, tag_path(@track.tag) %></td>
+      </tr>
+    <%- end -%>
+    <%- if @track -%>
+      <tr>
+        <td colspan="2"><%= track_date @track %></td>
+      </tr>
+    <%- end -%>
     <%- if @tag -%>
       <%- @tag.tracks.ordered.each do |track| -%>
         <tr>

@@ -13,10 +13,10 @@ class Statistic < ActiveRecord::Base
     self.max_ele = track.gpx.max[:ele]
     self.total_time = track.gpx.total_time
     self.motion_time = track.gpx.motion_time
-    self.stopped_time = track.gpx.stopped_time
-    self.avg_speed = track.gpx.avg_speed
     self.avg_motion_speed = track.gpx.avg_motion_speed
     self.max_speed = track.gpx.max_speed
+    self.start_date = track.gpx.start_date
+    self.end_date = track.gpx.end_date
   end
 
 end

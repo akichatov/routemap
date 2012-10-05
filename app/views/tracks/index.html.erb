@@ -28,8 +28,11 @@
         <tr>
           <td><%= index + 1 %>.</td>
           <td><%= link_to track.name, track %></td>
-          <td><%= track.tag_name %></td>
+          <%- unless @tag -%>
+            <td><%= track.tag_name %></td>
+          <%- end -%>
           <td class='distance'><%= format_distance track.statistic.distance %></td>
+          <td class='track_date'><%= track_date track %></td>
           <%- if user_signed_in? && @tag -%>
             <td class='action'><%= link_to image_tag('icon_up.png'), up_tag_tracks_path(@tag, track), method: :put, title: t('views.tracks.index.labels.up') %></td>
             <td class='action'><%= link_to image_tag('icon_down.png'), down_tag_tracks_path(@tag, track), method: :put, title: t('views.tracks.index.labels.down') %></td>

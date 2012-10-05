@@ -5,7 +5,8 @@ class GpxTrack
   MOTION_SPEED_LIMIT = 0.33
 
   attr_reader :min, :max, :points, :distance, :climb, :descent, :name,
-              :total_time, :motion_time, :stopped_time, :avg_speed, :max_speed, :avg_motion_speed
+              :total_time, :motion_time, :stopped_time, :avg_speed,
+              :max_speed, :avg_motion_speed, :start_date, :end_date, :timezone
 
   def self.parse(track)
     if track.new_record?
@@ -75,6 +76,9 @@ private
     @min = {lat: lats.min, lon: lons.min, ele: eles.min}
     @max = {lat: lats.max, lon: lons.max, ele: eles.max}
     @total_time = @points.last[:time] - @points.first[:time]
+    @start_date = Time.at(@points.first[:time]).utc
+    @end_date = Time.at(@points.last[:time]).utc
+    @timezone = Timezone::Zone.new(latlon: [@points.first[:lat], @points.first[:lon]]).zone
 
     previous_point = @points.first
     @climb = @descent = 0.0
@@ -84,19 +88,14 @@ private
       @climb += delta_height if delta_height > 0
       @descent += delta_height.abs if delta_height < 0
       point[:speed] = calculate_speed(point, index)
-      if point[:speed] > MOTION_SPEED_LIMIT
-        @motion_time += point[:time] - previous_point[:time]
-      else
-        @stopped_time += point[:time] - previous_point[:time]
-      end
+      @motion_time += point[:time] - previous_point[:time] if point[:speed] > MOTION_SPEED_LIMIT
       previous_point = point
     end
 
     speeds = @points.map{|p| p[:speed]}
-    @avg_speed = ((@distance / 1000.0) / (@total_time / 3600.0)).round(2)
     @max_speed = speeds.max
     motion_speeds = speeds.select{|s| s > MOTION_SPEED_LIMIT }
-    @avg_motion_speed = motion_speeds.inject(:+) / motion_speeds.size
+    @avg_motion_speed = motion_speeds.size > 0 ? (motion_speeds.inject(:+) / motion_speeds.size).round(2) : 0.0
   end
 
   def calculate_speed(point, index)

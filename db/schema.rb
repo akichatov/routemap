@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121003103451) do
+ActiveRecord::Schema.define(:version => 20121005090303) do
 
   create_table "statistics", :force => true do |t|
     t.integer  "track_id",                                       :null => false
@@ -20,9 +20,7 @@ ActiveRecord::Schema.define(:version => 20121003103451) do
     t.integer  "descent"
     t.integer  "total_time"
     t.integer  "motion_time"
-    t.integer  "stopped_time"
     t.decimal  "max_speed",        :precision => 7, :scale => 2
-    t.decimal  "avg_speed",        :precision => 7, :scale => 2
     t.decimal  "avg_motion_speed", :precision => 7, :scale => 2
     t.decimal  "min_lat",          :precision => 9, :scale => 6
     t.decimal  "min_lon",          :precision => 9, :scale => 6
@@ -32,6 +30,8 @@ ActiveRecord::Schema.define(:version => 20121003103451) do
     t.decimal  "max_ele",          :precision => 7, :scale => 2
     t.datetime "created_at",                                     :null => false
     t.datetime "updated_at",                                     :null => false
+    t.datetime "start_date"
+    t.datetime "end_date"
   end
 
   create_table "tags", :force => true do |t|
@@ -42,19 +42,38 @@ ActiveRecord::Schema.define(:version => 20121003103451) do
     t.string   "code"
   end
 
+  create_table "tags_tracks", :force => true do |t|
+    t.integer  "tag_id"
+    t.integer  "track_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "tags_tracks", ["tag_id", "track_id"], :name => "index_tags_tracks_on_tag_id_and_track_id", :unique => true
+
   create_table "tracks", :force => true do |t|
-    t.string   "name",                                                           :null => false
-    t.string   "code",                                                           :null => false
-    t.string   "attachment_file_name",                                           :null => false
-    t.integer  "attachment_file_size",                                           :null => false
-    t.string   "attachment_content_type",                                        :null => false
-    t.datetime "created_at",                                                     :null => false
-    t.datetime "updated_at",                                                     :null => false
+    t.string   "name",                                                                                         :null => false
+    t.string   "code",                                                                                         :null => false
+    t.string   "attachment_file_name",                                                                         :null => false
+    t.integer  "attachment_file_size",                                                                         :null => false
+    t.string   "attachment_content_type",                                                                      :null => false
+    t.datetime "created_at",                                                                                   :null => false
+    t.datetime "updated_at",                                                                                   :null => false
     t.integer  "user_id"
     t.integer  "tag_id"
-    t.boolean  "processed",                                   :default => false, :null => false
+    t.integer  "distance"
+    t.integer  "climb"
+    t.integer  "descent"
+    t.boolean  "processed",                                                                 :default => false, :null => false
+    t.decimal  "min_lat",                                     :precision => 9, :scale => 6
+    t.decimal  "min_lon",                                     :precision => 9, :scale => 6
+    t.decimal  "max_lat",                                     :precision => 9, :scale => 6
+    t.decimal  "max_lon",                                     :precision => 9, :scale => 6
+    t.decimal  "min_ele",                                     :precision => 7, :scale => 2
+    t.decimal  "max_ele",                                     :precision => 7, :scale => 2
     t.binary   "data",                    :limit => 16777215
-    t.integer  "position",                                    :default => 0
+    t.integer  "position",                                                                  :default => 0
+    t.string   "timezone"
   end
 
   create_table "users", :force => true do |t|

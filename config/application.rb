@@ -60,3 +60,7 @@ module Routemap
     # config.assets.initialize_on_precompile = false
   end
 end
+
+Timezone::Configure.begin do |c|
+  c.username = 'trackdojo'
+end
