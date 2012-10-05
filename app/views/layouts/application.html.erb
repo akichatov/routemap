@@ -19,9 +19,6 @@
         </div>
         <%- if @track && !@track.new_record? -%>
           <div class="menu_item">
-            <%= link_to t('views.menu.edit_track'), edit_track_path(@track) %>
-          </div>
-          <div class="menu_item">
             <%= link_to t('views.menu.delete_track'), track_path(@track), method: :delete, confirm: 'Are you sure?' %>
           </div>
         <%- end -%>

@@ -7,8 +7,7 @@ Routemap::Application.routes.draw do
     root to: 'tracks#index'
   end
   root to: "home#index"
-  resources :tracks do
-  end
+  resources :tracks, except: [:edit]
   resources :tags, only: [:show] do
     resources :tracks do
       put ':id/up' => 'tracks#up', :as => :up, :on => :collection
