@@ -38,6 +38,7 @@
             <td class='action'><%= link_to image_tag('icon_down.png'), down_tag_tracks_path(@tag, track), method: :put, title: t('views.tracks.index.labels.down') %></td>
           <%- end -%>
           <td class='action'><%= link_to image_tag('icon_download.png'), track.attachment.url, title: t('views.tracks.index.labels.download') %></td>
+          <td class='action'><%= link_to image_tag('icon_edit.png'), @tag ? edit_tag_track_path(@tag, track) : edit_track_path(track), title: t('views.tracks.index.labels.edit') %></td>
           <td class='action'><%= link_to image_tag('icon_delete.png'), @tag ? tag_track_path(@tag, track) : track, method: :delete, confirm: 'Are you sure?', title: t('views.tracks.index.labels.delete') %></td>
         </tr>
       <%- end -%>

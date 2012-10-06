@@ -28,11 +28,7 @@ class Track < ActiveRecord::Base
   end
 
   def gpx
-    @gpx_track ||= GpxTrack.parse(self)
-  end
-
-  def points
-    gpx.points
+    @gpx_track ||= gpx_track
   end
 
   def raw_data
@@ -42,7 +38,9 @@ class Track < ActiveRecord::Base
 private
 
   def has_points
-    if points.size == 0
+    @gpx_track = gpx_track
+    if @gpx_track.points.size == 0
+      @gpx_track = nil
       errors.add :attachment, "can't be processed."
     end
   end
@@ -56,14 +54,15 @@ private
   end
 
   def process_data
-    unless self.processed
-      self.statistic ||= Statistic.new(track: self)
-      self.statistic.init_from_track
-      self.timezone = gpx.timezone
-      self.data = deflate(gpx.to_json)
-      self.processed = true
-      self.statistic.save
-    end
+    self.statistic ||= Statistic.new(track: self)
+    self.statistic.init_by(gpx)
+    self.timezone = gpx.timezone
+    self.data = deflate(gpx.to_json)
+    self.statistic.save! unless self.statistic.new_record?
+  end
+
+  def gpx_track
+    GpxTrack.parse(self)
   end
 
   def deflate(string)

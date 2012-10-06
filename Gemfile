@@ -5,24 +5,12 @@ gem 'rails', '3.2.1'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-group :development, :aak do
-  gem 'mysql2'
-  gem 'unicorn'
-end
-
 group :production do
   gem 'thin'
   gem 'pg'
   gem 'aws-s3'
   gem 'aws-sdk'
 end
-
-gem 'paperclip'
-gem 'devise'
-gem 'ruby-openid', git: 'git://github.com/openid/ruby-openid.git'
-gem 'omniauth-openid'
-gem 'libxml-ruby', :require => 'libxml'
-gem 'timezone'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -36,23 +24,22 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'jquery-rails'
-
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
-# To use Jbuilder templates for JSON
-# gem 'jbuilder'
-
-# Use unicorn as the web server
-# gem 'unicorn'
-
-# Deploy with Capistrano
-group :development do
+group :development, :aak do
+  gem 'mysql2'
+  gem 'unicorn'
   gem 'capistrano'
   gem 'rvm-capistrano'
   gem 'capistrano-unicorn'
 end
 
-# To use debugger
-# gem 'ruby-debug19', :require => 'ruby-debug'
+gem 'paperclip'
+gem 'devise'
+gem 'ruby-openid', git: 'git://github.com/openid/ruby-openid.git'
+gem 'omniauth-openid'
+gem 'libxml-ruby', :require => 'libxml'
+gem 'timezone'
+gem 'jquery-rails'
+
+group :development, :test do
+  gem 'rspec-rails'
+end

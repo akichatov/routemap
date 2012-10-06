@@ -5,24 +5,13 @@ class GpxTrack
   MOTION_SPEED_LIMIT = 0.33
 
   attr_reader :min, :max, :points, :distance, :climb, :descent, :name,
-              :total_time, :motion_time, :stopped_time, :avg_speed,
+              :total_time, :motion_time, :avg_speed,
               :max_speed, :avg_motion_speed, :start_date, :end_date, :timezone
 
   def self.parse(track)
-    if track.new_record?
-      file = track.attachment.to_file
-    else
-      if Rails.env == 'production'
-        require 'open-uri'
-        file = open(track.attachment.url)
-      else
-        file = File.open(track.attachment.path)
-      end
-    end
-
     points = []
     begin
-      reader = LibXML::XML::Reader.io(file)
+      reader = LibXML::XML::Reader.io(track.attachment.to_file)
       point = nil
       while reader.read
         if reader.node_type == LibXML::XML::Reader::TYPE_ELEMENT
@@ -65,7 +54,7 @@ private
   def initialize(points, track)
     @points = points
     @name = track.name
-    init_track_data
+    init_track_data if @points.size > 0
   end
 
   def init_track_data
@@ -82,7 +71,7 @@ private
 
     previous_point = @points.first
     @climb = @descent = 0.0
-    @motion_time = @stopped_time = 0
+    @motion_time = 0
     @points.each_with_index do |point, index|
       delta_height = point[:ele] - previous_point[:ele]
       @climb += delta_height if delta_height > 0
