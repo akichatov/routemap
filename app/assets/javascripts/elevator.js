@@ -296,6 +296,7 @@ Elevator.prototype.drawGraphTemplate = function() {
       previous.screen.x, previous.screen.y,
       datum.screen.x, datum.screen.y
     );
+    this.visiblePoints[previous.screen.x] = previous;
     this.visiblePoints[datum.screen.x] = datum;
   }
   this.contextTemplate.quadraticCurveTo(
