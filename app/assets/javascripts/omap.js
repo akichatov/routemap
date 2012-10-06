@@ -99,9 +99,11 @@ OMap.prototype.addPoint = function(point) {
 };
 
 OMap.prototype.getTolerance = function() {
-  var tolerance = Math.pow(this.omap.getNumZoomLevels() - this.omap.getZoom() - 1, 2);
-  if(tolerance < 0) {
+  var tolerance = this.omap.getNumZoomLevels() - this.omap.getZoom() - 1;
+  if(tolerance < 0 || tolerance <= 5 && this.omap.getNumZoomLevels() > 19) {
     tolerance = 0;
+  } else {
+    tolerance = Math.pow(tolerance, 2)
   }
   return tolerance;
 };

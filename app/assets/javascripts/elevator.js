@@ -1,7 +1,6 @@
 function Elevator() {
   this.yattr = 'ele';
   this.data = [];
-  this.visiblePoints = [];
   this.height = 200;
   this.zoomFactorIndex = 0;
   this.zoomFactor = 1;
@@ -28,6 +27,7 @@ function Elevator() {
 }
 
 Elevator.prototype.init = function() {
+  this.screenPoints = [];
   this.calcMinMax();
   var zeroCount = Math.floor((this.maxY - this.minY) / 10).toString().length
   var factor = "1";
@@ -94,13 +94,18 @@ Elevator.prototype.processScreenPoints = function() {
   this.factorY = this.visibleHeight / (diffY == 0 ? 1 : diffY);
   for(var i = 0; i < this.data.length; i++) {
     var datum = this.data[i];
-    datum.screen = this.getScreenPoint(datum);
+    var screenPoint = this.calculateScreenPoint(datum.point);
+    var existent = this.screenPoints[screenPoint.x];
+    if(!existent || existent.point[this.yattr] < datum.point[this.yattr]) {
+      this.screenPoints[screenPoint.x] = screenPoint;
+      screenPoint.point = datum.point;
+    }
   }
 }
 
-Elevator.prototype.getScreenPoint = function(datum) {
-  var x = Math.ceil(datum.point.fdist / this.factorX + this.padding.left);
-  var y = this.height - Math.round((datum.point[this.yattr] - this.startY) * this.factorY) - this.padding.bottom;
+Elevator.prototype.calculateScreenPoint = function(point) {
+  var x = Math.ceil(point.fdist / this.factorX + this.padding.left);
+  var y = this.height - Math.round((point[this.yattr] - this.startY) * this.factorY) - this.padding.bottom;
   return {x: x, y: y};
 }
 
@@ -173,34 +178,34 @@ Elevator.prototype.doubleClick = function(event) {
   return false;
 };
 
-Elevator.prototype.getDatum = function(x) {
-  var datum = this.visiblePoints[x];
-  if(!datum) {
+Elevator.prototype.getScreenPoint = function(x) {
+  var screenPoint = this.screenPoints[x];
+  if(!screenPoint) {
     for(var i = 0; i < 100; i++) {
-      var next = this.visiblePoints[x + i];
-      var previous = this.visiblePoints[x - i];
+      var next = this.screenPoints[x + i];
+      var previous = this.screenPoints[x - i];
       if(next || previous) {
         return next || previous;
       }
     }
   }
-  return datum;
+  return screenPoint;
 };
 
 Elevator.prototype.startSelection = function(x) {
-  var datum = this.getDatum(x);
-  if(datum) {
-    this.selectionStart = datum;
-    $(document).trigger("selection:start", datum.point);
+  var screenPoint = this.getScreenPoint(x);
+  if(screenPoint) {
+    this.selectionStart = screenPoint;
+    $(document).trigger("selection:start", screenPoint.point);
   }
 };
 
 Elevator.prototype.endSelection = function(x) {
   if(this.selectionStart != x) {
-    var datum = this.getDatum(x);
-    if(datum) {
-      this.selectionEnd = datum;
-      $(document).trigger("selection:end", datum.point);
+    var screenPoint = this.getScreenPoint(x);
+    if(screenPoint) {
+      this.selectionEnd = screenPoint;
+      $(document).trigger("selection:end", screenPoint.point);
     }
   }
 };
@@ -208,14 +213,14 @@ Elevator.prototype.endSelection = function(x) {
 Elevator.prototype.clearSelection = function(x) {
   this.selectionStart = this.selectionEnd = null;
   this.draw();
-  var datum = this.getDatum(x);
-  if(datum) {
-    $(document).trigger("selection:clear", datum.point);
+  var screenPoint = this.getScreenPoint(x);
+  if(screenPoint) {
+    $(document).trigger("selection:clear", screenPoint.point);
   }
 };
 
-Elevator.prototype.getLabel = function(datum) {
-  return datum.point[this.yattr] + '';
+Elevator.prototype.getLabel = function(screenPoint) {
+  return screenPoint.point[this.yattr] + '';
 };
 
 Elevator.prototype.clear = function() {
@@ -230,10 +235,10 @@ Elevator.prototype.draw = function() {
     this.drawSelection();
     if(this.moveX) {
       this.drawVLineAt(this.moveX);
-      var datum = this.getDatum(this.moveX);
-      if(datum) {
-        this.context.fillText(this.getLabel(datum), this.moveX, this.padding.top - 5);
-        $(document).trigger("elevation:over", datum.point);
+      var screenPoint = this.getScreenPoint(this.moveX);
+      if(screenPoint) {
+        this.context.fillText(this.getLabel(screenPoint), this.moveX, this.padding.top - 5);
+        $(document).trigger("elevation:over", screenPoint.point);
       }
     }
   }
@@ -241,12 +246,12 @@ Elevator.prototype.draw = function() {
 
 Elevator.prototype.drawSelection = function() {
   if(this.selectionStart) {
-    var fillWidth = this.selectionStart.screen.x - (this.selectionEnd ? this.selectionEnd.screen.x : this.moveX);
+    var fillWidth = this.selectionStart.x - (this.selectionEnd ? this.selectionEnd.x : this.moveX);
     this.context.fillStyle = "rgba(228,237,247,0.7)";
-    this.context.fillRect(this.selectionStart.screen.x + 1, this.padding.top - 3, -fillWidth, this.height - 1);
+    this.context.fillRect(this.selectionStart.x + 1, this.padding.top - 3, -fillWidth, this.height - 1);
     this.context.strokeStyle = "rgba(123,132,142,1)";
-    this.drawVLineAt(this.selectionStart.screen.x);
-    this.drawVLineAt(this.selectionEnd ? this.selectionEnd.screen.x : this.moveX);
+    this.drawVLineAt(this.selectionStart.x);
+    this.drawVLineAt(this.selectionEnd ? this.selectionEnd.x : this.moveX);
     this.context.strokeStyle = this.context.fillStyle = "#000000";
   }
 };
@@ -284,24 +289,28 @@ Elevator.prototype.drawAxis = function() {
 Elevator.prototype.drawGraphTemplate = function() {
   this.contextTemplate.restore();
   this.contextTemplate.clearRect(this.padding.left, 0, this.width - this.padding.left - this.padding.right, this.height - 1);
-  this.visiblePoints = [];
-  var previous = datum = this.data[0];
-  this.visiblePoints[previous.screen.x] = previous;
   this.contextTemplate.beginPath();
-  this.contextTemplate.moveTo(this.padding.left, this.height - this.padding.bottom);
-  for(var i = 1; i < this.data.length; i+=2) {
-    datum = this.data[i];
-    previous = this.data[i - 1];
-    this.contextTemplate.quadraticCurveTo(
-      previous.screen.x, previous.screen.y,
-      datum.screen.x, datum.screen.y
-    );
-    this.visiblePoints[previous.screen.x] = previous;
-    this.visiblePoints[datum.screen.x] = datum;
+  var previous = {x: this.padding.left, y: this.height - this.padding.bottom};
+  this.contextTemplate.moveTo(previous.x, previous.y);
+  var current = next = null;
+  for(var i = 0; i < this.screenPoints.length; i++) {
+    current = this.screenPoints[i];
+    if(current) {
+      this.contextTemplate.lineTo(
+        previous.x, previous.y,
+        current.x, current.y
+      );
+      previous = current;
+    }
   }
-  this.contextTemplate.quadraticCurveTo(
-    datum.screen.x, datum.screen.y,
+
+  this.contextTemplate.lineTo(
+    previous.x, previous.y,
     this.width - this.padding.right, this.height - this.padding.bottom
+  );
+  this.contextTemplate.lineTo(
+    this.width - this.padding.right, this.height - this.padding.bottom,
+    this.padding.left, this.height - this.padding.bottom
   );
   this.contextTemplate.save();
   this.contextTemplate.clip();
