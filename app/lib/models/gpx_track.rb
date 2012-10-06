@@ -1,8 +1,8 @@
 require 'libxml'
 class GpxTrack
   UNIT_FACTOR = { meters: 1.0, kms: 0.001 }
-  SPEED_TIME_LIMIT_SEC = 3
-  MOTION_SPEED_LIMIT = 0.33
+  SPEED_TIME_LIMIT_SEC = 10
+  MOTION_SPEED_LIMIT = 0.35
 
   attr_reader :min, :max, :points, :distance, :climb, :descent, :name,
               :total_time, :motion_time, :avg_speed,
@@ -93,7 +93,7 @@ private
     i = 1
     previous = @points[index - i]
     while previous && time < SPEED_TIME_LIMIT_SEC
-      time += (point[:time] - previous[:time])
+      time = point[:time] - previous[:time]
       dist = point[:fdist] - previous[:fdist]
       i += 1
       previous = @points[index - i]
