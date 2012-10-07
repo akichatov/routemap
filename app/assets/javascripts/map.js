@@ -1,5 +1,6 @@
 //= require timezone-js/date
-//= require openlayers
+//= require yandex
+//= require full_screen
 //= require elevator
 //= require omap
 //= require_self
