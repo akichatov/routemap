@@ -85,21 +85,17 @@ OpenLayers.Layer.Yandex = OpenLayers.Class(
      * LOCALE: ru-RU, en-US, tr-TR, uk-UA
      */
     loadMapObject:function() {
-      // ymaps.ready($.proxy(this.doLoadMapObject, this));
         try {            
             this.mapObject = new ymaps.Map(this.div.id, {
               type: this.type,
-              center: [55.76, 37.64],
-              zoom: 8,
+              center: this.map.getCenter(),
+              zoom: this.map.getZoom(),
               behaviors: []
             });
             this.dragPanMapObject = null;
         } catch (e) {
             OpenLayers.Console.error(e);
         }
-    },
-
-    doLoadMapObject:function() {
     },
 
     /**
@@ -118,8 +114,19 @@ OpenLayers.Layer.Yandex = OpenLayers.Class(
      * evt - {Event}
      */
     onMapResize: function() {
+      if(!this.visibility) {
+        this.setVisibility(true)
+        this.reloadMap();
+        this.setVisibility(false)
+      } else {
+        this.reloadMap();
+      }
     },
 
+    reloadMap: function() {
+      this.mapObject.destroy();
+      this.loadMapObject();
+    },
 
 /* TRANSLATION: MapObject Bounds <-> OpenLayers.Bounds */
     /**
