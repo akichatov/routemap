@@ -28,10 +28,37 @@
   }
 }
 
-#maps .map {
-  margin-bottom: 10px;
-  .olControlLayerSwitcher {
-    top: 0;
+#maps {
+  .map {
+    margin-bottom: 10px;
+    .olControlLayerSwitcher {
+      top: 0;
+    }
+    .olControlFullScreen {
+      bottom: 2px;
+      right: 2px;
+      background: none repeat scroll 0 0 rgba(0, 60, 136, 0.5);
+      color: white;
+      display: block;
+      font-family: 'Lucida Grande',Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      height: 22px;
+      line-height: 19px;
+      margin: 1px;
+      padding: 0;
+      text-align: center;
+      text-decoration: none;
+      width: 22px;
+    }
+    &.fullScreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background-color: white;
+    }
   }
 }
 

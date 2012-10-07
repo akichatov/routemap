@@ -1,3 +1,9 @@
+//= require timezone-js/date
+//= require openlayers
+//= require elevator
+//= require omap
+//= require_self
+
 var Map = function() {
   this.options = {
     strokeColor: 'FF0000',

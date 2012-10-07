@@ -44,7 +44,7 @@ var OMap = function(options, map) {
   this.omap.addLayer(bingHybrid);
   this.omap.zoomToExtent(this.getBounds());
   this.omap.addControl(new OpenLayers.Control.LayerSwitcher());
-  // this.omap.addControl(new OpenLayers.Control.PanZoomBar());
+  this.omap.addControl(new OpenLayers.Control.FullScreen());
 };
 
 OMap.prototype.addYandex = function() {

@@ -1,7 +1,7 @@
 <%= javascript "http://www.openlayers.org/api/OpenLayers.js" %>
 <%= javascript "http://maps.googleapis.com/maps/api/js?key=#{MapApiKeys::GOOGLE}&sensor=false" %>
 <%= javascript "http://api-maps.yandex.ru/2.0-stable/?load=package.full&coordorder=longlat&lang=ru-RU" %>
-<%= javascript 'timezone-js/date.js', 'openlayers/yandex.js', 'elevator.js', 'omap.js', 'map.js' %>
+<%= javascript 'map.js' %>
 <%= javascript track_path(@track, format: :js) if @track %>
 <%= javascript tag_path(@tag, format: :js) if @tag %>
 <div id='cover'></div>
@@ -83,8 +83,6 @@
 </div>
 <div id="maps">
   <div id="omap" class="map"></div>
-  <div id="gmap" class="map" style="display: none;"></div>
-  <div id="ymap" class="map" style="display: none;"></div>
 </div>
 <div style="clear: both;"></div>
 <div id="pointInfo">
