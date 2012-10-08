@@ -10,7 +10,8 @@ class Track < ActiveRecord::Base
   attr_accessible :name, :attachment, :tag_name, :position
   attr_writer :tag_name
 
-  validates_presence_of :name, :attachment_file_name
+  validates_presence_of :name
+  validates :attachment, attachment_presence: true
   validate :has_points
 
   scope :ordered, order(:position)
@@ -38,6 +39,7 @@ class Track < ActiveRecord::Base
 private
 
   def has_points
+    return unless attachment.present?
     @gpx_track = gpx_track
     if @gpx_track.points.size == 0
       @gpx_track = nil

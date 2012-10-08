@@ -10,8 +10,13 @@ class GpxTrack
 
   def self.parse(track)
     points = []
+    if(track.new_record? || track.attachment.dirty?)
+      file = File.open(track.attachment.queued_for_write[:original].path)
+    else
+      file = Paperclip.io_adapters.for(track.attachment)
+    end
     begin
-      reader = LibXML::XML::Reader.io(track.attachment.to_file)
+      reader = LibXML::XML::Reader.io(file)
       point = nil
       while reader.read
         if reader.node_type == LibXML::XML::Reader::TYPE_ELEMENT

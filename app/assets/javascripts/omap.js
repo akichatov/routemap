@@ -66,16 +66,23 @@ OMap.prototype.addYandex = function() {
 
 OMap.prototype.init = function() {
   this.initialized = true;
-  for(var i = 0; i < this.lines.length; i++) {
-    var line = this.lines[i];
-    line.vectorLayer = new OpenLayers.Layer.Vector(line.name, {style: {
+  for(var i = 0; i < Map.tracks.length; i++) {
+    var track = Map.tracks[i];
+    var line = [];
+    this.lines.push(line);
+    line.vectorLayer = new OpenLayers.Layer.Vector(track.name, {style: {
       strokeColor: "#" + this.options.strokeColor,
       strokeWidth: this.options.strokeWeight,
       strokeOpacity: this.options.strokeOpacity
     }});
+    for(var j = 0; j < track.points.length; j++) {
+      var point = track.points[j];
+      var geometry = new OpenLayers.Geometry.Point(point.lon, point.lat).transform(this.fromProjection, this.omap.getProjectionObject());
+      line.push(geometry);
+    }
     line.lineString = new OpenLayers.Geometry.LineString(line);
     simplified = line.lineString.simplify(this.getTolerance());
-    line.vectorLayer.addFeatures([new OpenLayers.Feature.Vector(simplified)])
+    line.vectorLayer.addFeatures([new OpenLayers.Feature.Vector(simplified)]);
     this.omap.addLayer(line.vectorLayer);
   }
   this.markers = new OpenLayers.Layer.Markers("Markers");
@@ -85,17 +92,6 @@ OMap.prototype.init = function() {
   this.startMarker = new OpenLayers.Marker(null, new OpenLayers.Icon(this.options.startIconUrl, this.markerSize, this.markerOffset));
   this.endMarker = new OpenLayers.Marker(null, new OpenLayers.Icon(this.options.endIconUrl, this.markerSize, this.markerOffset));
   this.omap.addLayer(this.markers);
-};
-
-OMap.prototype.addPoint = function(point) {
-  var line = this.lines[this.lines.length - 1];
-  if(point.first) {
-    line = [];
-    line.name = point.track.name
-    this.lines.push(line);
-  }
-  var geometry = new OpenLayers.Geometry.Point(point.lon, point.lat).transform(this.fromProjection, this.omap.getProjectionObject());
-  line.push(geometry);
 };
 
 OMap.prototype.getTolerance = function() {

@@ -1,6 +1,8 @@
 Routemap::Application.configure do
   RM_DOMAIN = 'lvh.me'
-  TRACK_ATTACHMENT_OPTS = {}
+  TRACK_ATTACHMENT_OPTS = {
+    path: Rails.root.to_s + '/tmp/tracks/:id/attachments/:basename.:extension'
+  }
   # Settings specified here will take precedence over those in config/application.rb
 
   # The test environment is used exclusively to run your application's

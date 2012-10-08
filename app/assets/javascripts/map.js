@@ -18,8 +18,7 @@ var Map = function() {
   this.points = [];
   this.initTracks();
   this.omap = new OMap(this.options, this);
-  this.currentMap = this.omap;
-  this.elevator = new Elevator();
+  this.elevator = new Elevator(this);
   this.metersPerPixel = this.tracks_distance / this.elevator.visibleWidth;
   for(var i = 0; i < Map.tracks.length; i++) {
     this.initTrack(Map.tracks[i], i);
@@ -66,8 +65,6 @@ Map.prototype.initTrack = function(track, trackIndex) {
     point.time = new timezoneJS.Date(point.time * 1000, track.timezone).toString();
     point.fullIndex = this.points.length;
     this.points.push(point);
-    this.omap.addPoint(point);
-    this.elevator.addPoint(point);
   }
 };
 
@@ -85,24 +82,24 @@ Map.prototype.elevationOver = function(event, point) {
 };
 
 Map.prototype.doElevationOver = function(event, point) {
-  this.currentMap.elevationOver(point);
+  this.omap.elevationOver(point);
 };
 
 Map.prototype.startSelection = function(event, point) {
   this.startSelectionPoint = point;
-  this.currentMap.startSelection(point);
+  this.omap.startSelection(point);
   $("#selectionStartEle").html(point.ele);
 };
 
 Map.prototype.endSelection = function(event, point) {
   this.endSelectionPoint = point;
-  this.currentMap.endSelection(point);
+  this.omap.endSelection(point);
   $("#selectionEndEle").html(point.ele);
   $("#selectionDistance").html(this.getSelectionDistance().toFixed(2));
 };
 
 Map.prototype.clearSelection = function(event, point) {
-  this.currentMap.clearSelection(point);
+  this.omap.clearSelection(point);
   $("#selectionStartEle, #selectionEndEle, #selectionDistance").html('');
 };
 

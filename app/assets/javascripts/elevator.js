@@ -1,6 +1,6 @@
-function Elevator() {
+function Elevator(map) {
+  this.map = map;
   this.yattr = 'ele';
-  this.data = [];
   this.height = 200;
   this.zoomFactorIndex = 0;
   this.zoomFactor = 1;
@@ -53,14 +53,10 @@ Elevator.prototype.showEle = function() {
   this.init();
 }
 
-Elevator.prototype.addPoint = function(point) {
-  this.data.push({point: point});
-};
-
 Elevator.prototype.calcMinMax = function() {
   this.minX = this.maxX = this.minY = this.maxY = null;
-  for(var i = 0; i < this.data.length; i++) {
-    var point = this.data[i].point;
+  for(var i = 0; i < this.map.points.length; i++) {
+    var point = this.map.points[i];
     var valueX = point.fdist;
     var valueY = point[this.yattr];
     this.minX = this.minX && this.minX < valueX ? this.minX : valueX;
@@ -92,13 +88,13 @@ Elevator.prototype.processScreenPoints = function() {
   var diffY = this.endY - this.startY;
   this.factorX = this.maxX / this.visibleWidth;
   this.factorY = this.visibleHeight / (diffY == 0 ? 1 : diffY);
-  for(var i = 0; i < this.data.length; i++) {
-    var datum = this.data[i];
-    var screenPoint = this.calculateScreenPoint(datum.point);
+  for(var i = 0; i < this.map.points.length; i++) {
+    var point = this.map.points[i];
+    var screenPoint = this.calculateScreenPoint(point);
     var existent = this.screenPoints[screenPoint.x];
-    if(!existent || existent.point[this.yattr] < datum.point[this.yattr]) {
+    if(!existent || existent.point[this.yattr] < point[this.yattr]) {
       this.screenPoints[screenPoint.x] = screenPoint;
-      screenPoint.point = datum.point;
+      screenPoint.point = point;
     }
   }
 }
@@ -230,7 +226,7 @@ Elevator.prototype.clear = function() {
 Elevator.prototype.draw = function() {
   this.clear();
   this.drawGrid();
-  if(this.data.length > 1) {
+  if(this.map.points.length > 1) {
     this.drawGraph();
     this.drawSelection();
     if(this.moveX) {
