@@ -38,7 +38,11 @@ en:
 
       show:
         labels:
+          name: 'Name'
+          group: 'Group'
+          date: 'Date'
           time: 'Time'
+          actions: 'Actions'
           ele: 'Elevation'
           speed: 'Speed'
           dist: 'Distance'

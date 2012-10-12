@@ -244,7 +244,7 @@ Elevator.prototype.drawSelection = function() {
   if(this.selectionStart) {
     var fillWidth = this.selectionStart.x - (this.selectionEnd ? this.selectionEnd.x : this.moveX);
     this.context.fillStyle = "rgba(228,237,247,0.7)";
-    this.context.fillRect(this.selectionStart.x + 1, this.padding.top - 3, -fillWidth, this.height - 1);
+    this.context.fillRect(this.selectionStart.x + 1, this.padding.top, -fillWidth, this.height - this.padding.top - this.padding.bottom - 1);
     this.context.strokeStyle = "rgba(123,132,142,1)";
     this.drawVLineAt(this.selectionStart.x);
     this.drawVLineAt(this.selectionEnd ? this.selectionEnd.x : this.moveX);
@@ -254,7 +254,7 @@ Elevator.prototype.drawSelection = function() {
 
 Elevator.prototype.drawVLineAt = function(x) {
   this.context.beginPath();
-  this.context.moveTo(x + 0.5, this.padding.top - 3);
+  this.context.moveTo(x + 0.5, this.padding.top);
   this.context.lineTo(x + 0.5, this.height - 1);
   this.context.stroke();
 };
@@ -288,7 +288,7 @@ Elevator.prototype.drawGraphTemplate = function() {
   this.contextTemplate.beginPath();
   var previous = {x: this.padding.left, y: this.height - this.padding.bottom};
   this.contextTemplate.moveTo(previous.x, previous.y);
-  var current = next = null;
+  var current = null;
   for(var i = 0; i < this.screenPoints.length; i++) {
     current = this.screenPoints[i];
     if(current) {
@@ -299,7 +299,6 @@ Elevator.prototype.drawGraphTemplate = function() {
       previous = current;
     }
   }
-
   this.contextTemplate.lineTo(
     previous.x, previous.y,
     this.width - this.padding.right, this.height - this.padding.bottom

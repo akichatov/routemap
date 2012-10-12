@@ -38,7 +38,11 @@ ru:
 
       show:
         labels:
+          name: 'Название'
+          group: 'Группа'
+          date: 'Дата'
           time: 'Время'
+          actions: 'Действия'
           ele: 'Высота'
           speed: 'Скорость'
           dist: 'Расстояние'

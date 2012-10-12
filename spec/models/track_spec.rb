@@ -9,14 +9,13 @@ describe Track do
         @track = Track.create(name: 'track', attachment: File.new(Rails.root + 'spec/fixtures/gpx/051011.gpx'))
       end
       context "new" do
-        it "should create statistic" do
-          @track.save
+        it "creates statistic" do
           @track.statistic.should be_persisted
         end
       end
 
       context "existent" do
-        it "should update statistic" do
+        it "updates statistic" do
           track = Track.find(@track.id)
           distance = track.statistic.distance
           track.update_attributes(attachment: File.new(Rails.root + 'spec/fixtures/gpx/050911.gpx'))
@@ -31,7 +30,7 @@ describe Track do
           before do
             @track = Track.new(name: 'track', attachment: File.new(Rails.root + 'spec/fixtures/gpx/empty.gpx'))
           end
-          it "should reject empty file" do
+          it "rejects empty file" do
             @track.should_not be_valid
           end
         end
@@ -41,7 +40,7 @@ describe Track do
             @track = Track.create(name: 'track', attachment: File.new(Rails.root + 'spec/fixtures/gpx/050911.gpx'))
             @track.update_attributes(attachment: File.new(Rails.root + 'spec/fixtures/gpx/empty.gpx'))
           end
-          it "should reject empty file" do
+          it "rejects empty file" do
             @track.should_not be_valid
           end
         end

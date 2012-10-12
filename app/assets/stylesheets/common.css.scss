@@ -44,35 +44,28 @@ a:link, a:visited {
   overflow: hidden;
   #tag_list {
     float: left;
-    width: 300px;
-    ul {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      li {
-        * {
-          vertical-align: middle;
-        }
-        padding: 5px 10px;
-        &.active {
-          padding-left: 6px;
-          border-left: 4px solid #E5E5E5;
-          font-weight: bold;
-        }
-        small {
-          float: right;
-          line-height: 20px;
-        }
+    max-width: 300px;
+    margin-right: 20px;
+    .tag {
+      padding: 5px 10px;
+      &.active {
+        padding-left: 6px;
+        border-left: 4px solid #E5E5E5;
+        font-weight: bold;
+      }
+      small {
+        float: right;
+        margin-left: 20px;
       }
     }
   }
 
   #track_list {
-    margin-left: 330px;
     table {
       border-collapse: collapse;
       margin-left: 20px;
-      td {
+
+      td, th {
         padding: 5px 10px;
         border-bottom: 1px solid #E5E5E5;
       }
@@ -82,6 +75,9 @@ a:link, a:visited {
       }
       td.track_date {
         white-space: nowrap;
+      }
+      td.action a {
+        margin-left: 5px;
       }
       td.action * {
         visibility: hidden;
