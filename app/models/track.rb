@@ -2,6 +2,8 @@ class Track < ActiveRecord::Base
   belongs_to :user
   belongs_to :tag
   has_one :statistic, dependent: :destroy
+  has_one :version, dependent: :destroy
+
   has_attached_file :attachment, {
     hash_data: ':class/:attachment/:id/:code',
     hash_secret: 'track_attachment_secret'
@@ -29,21 +31,17 @@ class Track < ActiveRecord::Base
     self.code
   end
 
-  def gpx
-    @gpx_track ||= gpx_track
-  end
-
-  def raw_data
-    inflate self.data
+  def output
+    @output ||= Gpx.parse(self)
   end
 
 private
 
   def has_points
     return unless attachment.present?
-    @gpx_track = gpx_track
-    if @gpx_track.points.size == 0
-      @gpx_track = nil
+    @output = Gpx.parse(self)
+    if @output.points.size == 0
+      @output = nil
       errors.add :attachment, "can't be processed."
     end
   end
@@ -57,34 +55,21 @@ private
   end
 
   def process_data
-    self.statistic ||= Statistic.new(track: self)
-    self.statistic.init_by(gpx)
-    self.timezone = gpx.timezone
-    self.data = deflate(gpx.to_json)
-    self.statistic.save! unless self.statistic.new_record?
+    if attachment.dirty?
+      self.timezone = output.timezone
+
+      self.statistic ||= Statistic.new(track: self)
+      self.statistic.init_by(output)
+      self.statistic.save! unless self.statistic.new_record?
+
+      self.version ||= Version.new(track: self)
+      self.version.init_by(output)
+      self.version.save! unless self.version.new_record?
+    end
   end
 
   def update_position
     self.update_column(:position, tag.tracks.start_date_ordered.index(self)) if tag
-  end
-
-  def gpx_track
-    GpxTrack.parse(self)
-  end
-
-  def deflate(string)
-    z = Zlib::Deflate.new
-    dst = z.deflate(string, Zlib::FINISH)
-    z.close
-    dst
-  end
-
-  def inflate(string)
-    zstream = Zlib::Inflate.new
-    buf = zstream.inflate(string)
-    zstream.finish
-    zstream.close
-    buf
   end
 
 end

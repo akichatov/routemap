@@ -1,5 +1,4 @@
-require 'libxml'
-class GpxTrack
+class Output
   UNIT_FACTOR = { meters: 1.0, kms: 0.001 }
   SPEED_TIME_LIMIT_SEC = 10
   MOTION_SPEED_LIMIT = 0.35
@@ -8,37 +7,11 @@ class GpxTrack
               :total_time, :motion_time, :avg_speed,
               :max_speed, :avg_motion_speed, :start_date, :end_date, :timezone
 
-  def self.parse(track)
-    points = []
-    if(track.new_record? || track.attachment.dirty?)
-      file = File.open(track.attachment.queued_for_write[:original].path)
-    else
-      file = Paperclip.io_adapters.for(track.attachment)
-    end
-    begin
-      reader = LibXML::XML::Reader.io(file)
-      point = nil
-      while reader.read
-        if reader.node_type == LibXML::XML::Reader::TYPE_ELEMENT
-          if reader.name == "trkpt"
-            point = {lat: reader["lat"].to_f, lon: reader["lon"].to_f}
-          elsif reader.name == "ele" and point
-            point[:ele] = reader.read_string.to_f
-          elsif reader.name == "time" and point
-            point[:time] = DateTime.parse(reader.read_string).to_i
-          end
-        elsif reader.node_type == LibXML::XML::Reader::TYPE_END_ELEMENT
-          if reader.name == "trkpt" and point
-            point[:ele] ||= 0
-            points.push(point)
-          end
-        end
-      end
-    rescue
-      points = []
-    end
 
-    GpxTrack.new(points, track)
+  def initialize(points, track)
+    @points = points
+    @name = track.name
+    init_track_data if @points.size > 0
   end
 
   def distance_haversine(options={})
@@ -55,12 +28,6 @@ class GpxTrack
   end
 
 private
-
-  def initialize(points, track)
-    @points = points
-    @name = track.name
-    init_track_data if @points.size > 0
-  end
 
   def init_track_data
     @distance = distance_haversine

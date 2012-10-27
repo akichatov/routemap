@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121005090303) do
+ActiveRecord::Schema.define(:version => 20121027163821) do
 
   create_table "statistics", :force => true do |t|
     t.integer  "track_id",                                       :null => false
@@ -42,37 +42,18 @@ ActiveRecord::Schema.define(:version => 20121005090303) do
     t.string   "code"
   end
 
-  create_table "tags_tracks", :force => true do |t|
-    t.integer  "tag_id"
-    t.integer  "track_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "tags_tracks", ["tag_id", "track_id"], :name => "index_tags_tracks_on_tag_id_and_track_id", :unique => true
-
   create_table "tracks", :force => true do |t|
-    t.string   "name",                                                                                         :null => false
-    t.string   "code",                                                                                         :null => false
-    t.string   "attachment_file_name",                                                                         :null => false
-    t.integer  "attachment_file_size",                                                                         :null => false
-    t.string   "attachment_content_type",                                                                      :null => false
-    t.datetime "created_at",                                                                                   :null => false
-    t.datetime "updated_at",                                                                                   :null => false
+    t.string   "name",                                       :null => false
+    t.string   "code",                                       :null => false
+    t.string   "attachment_file_name",                       :null => false
+    t.integer  "attachment_file_size",                       :null => false
+    t.string   "attachment_content_type",                    :null => false
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
     t.integer  "user_id"
     t.integer  "tag_id"
-    t.integer  "distance"
-    t.integer  "climb"
-    t.integer  "descent"
-    t.boolean  "processed",                                                                 :default => false, :null => false
-    t.decimal  "min_lat",                                     :precision => 9, :scale => 6
-    t.decimal  "min_lon",                                     :precision => 9, :scale => 6
-    t.decimal  "max_lat",                                     :precision => 9, :scale => 6
-    t.decimal  "max_lon",                                     :precision => 9, :scale => 6
-    t.decimal  "min_ele",                                     :precision => 7, :scale => 2
-    t.decimal  "max_ele",                                     :precision => 7, :scale => 2
-    t.binary   "data",                    :limit => 16777215
-    t.integer  "position",                                                                  :default => 0
+    t.boolean  "processed",               :default => false, :null => false
+    t.integer  "position",                :default => 0
     t.string   "timezone"
   end
 
@@ -93,5 +74,12 @@ ActiveRecord::Schema.define(:version => 20121005090303) do
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "versions", :force => true do |t|
+    t.integer "track_id",                     :null => false
+    t.binary  "data",     :limit => 16777215
+  end
+
+  add_index "versions", ["track_id"], :name => "index_versions_on_track_id"
 
 end

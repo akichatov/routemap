@@ -1,6 +1,6 @@
 Map.tracks = [
   <%- @tag.tracks.ordered.each do |track| -%>
-    <%= track.raw_data.html_safe %>,
+    <%= track.version.raw_data.html_safe %>,
   <%- end -%>
   null
 ];
