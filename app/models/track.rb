@@ -7,17 +7,18 @@ class Track < ActiveRecord::Base
     hash_secret: 'track_attachment_secret'
   }.merge(TRACK_ATTACHMENT_OPTS)
 
-  attr_accessible :name, :attachment, :tag_name, :position
+  attr_accessible :name, :attachment, :tag_name
   attr_writer :tag_name
 
   validates_presence_of :name
   validates :attachment, attachment_presence: true
   validate :has_points
 
-  scope :ordered, order(:position)
-  scope :tag_ordered, order(:tag_id, :position)
+  scope :ordered, joins(:statistic).order("tracks.tag_id, tracks.position, statistics.start_date")
+  scope :start_date_ordered, joins(:statistic).order("statistics.start_date")
 
   before_create :generate_code
+  after_create :update_position
   before_save   :update_tag, :process_data
 
   def tag_name
@@ -61,6 +62,10 @@ private
     self.timezone = gpx.timezone
     self.data = deflate(gpx.to_json)
     self.statistic.save! unless self.statistic.new_record?
+  end
+
+  def update_position
+    self.update_column(:position, tag.tracks.start_date_ordered.index(self)) if tag
   end
 
   def gpx_track

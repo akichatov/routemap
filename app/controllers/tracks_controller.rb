@@ -69,7 +69,7 @@ private
   end
 
   def find_tracks
-    @all_tracks = current_user.tracks.tag_ordered
+    @all_tracks = current_user.tracks.ordered
     if @tag
       @tracks = @tag.tracks.ordered
     else
@@ -87,9 +87,9 @@ private
 
   def setup_new_track
     if @tag
-      @track = @tag.tracks.build(position: @tag.tracks.size)
+      @track = @tag.tracks.build
     else
-      @track = current_user.tracks.build(position: current_user.tracks.size)
+      @track = current_user.tracks.build
     end
   end
 
