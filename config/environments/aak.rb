@@ -1,5 +1,5 @@
 Routemap::Application.configure do
-  RM_DOMAIN = 'aak.dyndns.org'
+  RM_DOMAIN = 'trackdojo.com'
   TRACK_ATTACHMENT_OPTS = {
     url: '/system/tracks/attachments/:hash/:basename.:extension'
   }

@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   # :lockable, :timeoutable and :omniauthable
   # devise :database_authenticatable, :registerable,
   #        :recoverable, :rememberable, :trackable, :validatable
-  devise :omniauthable
+  devise :omniauthable, :rememberable
   attr_accessor :password
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password #, :password_confirmation, :remember_me
@@ -19,6 +19,10 @@ class User < ActiveRecord::Base
     else
       User.create!(:email => data["email"], :password => Devise.friendly_token[0,20])
     end
+  end
+
+  def remember_me
+    true
   end
 
 end
