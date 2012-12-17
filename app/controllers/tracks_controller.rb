@@ -52,8 +52,8 @@ class TracksController < ApplicationController
 private
 
   def move_track(offset)
-    track_index = @tag.tracks.ordered.index(@track)
-    previous_track = @tag.tracks.ordered[track_index + offset]
+    track_index = current_user.tracks.position_and_start_date_ordered.index(@track)
+    previous_track = current_user.tracks.position_and_start_date_ordered[track_index + offset]
     if previous_track
       @track.update_column(:position, track_index + offset)
       previous_track.update_column(:position, track_index)

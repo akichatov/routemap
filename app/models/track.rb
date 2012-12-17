@@ -17,6 +17,7 @@ class Track < ActiveRecord::Base
   validate :has_points
 
   scope :ordered, joins(:statistic).order("tracks.tag_id, tracks.position, statistics.start_date")
+  scope :position_and_start_date_ordered, joins(:statistic).order("tracks.position, statistics.start_date")
   scope :start_date_ordered, joins(:statistic).order("statistics.start_date")
 
   before_create :generate_code
@@ -69,7 +70,7 @@ private
   end
 
   def update_position
-    self.update_column(:position, tag.tracks.start_date_ordered.index(self)) if tag
+    self.update_column(:position, user.tracks.start_date_ordered.index(self))
   end
 
 end
