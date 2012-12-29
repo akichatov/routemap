@@ -9,6 +9,10 @@ class Version < ActiveRecord::Base
     inflate self.data
   end
 
+  def to_hash
+    JSON.parse(raw_data, symbolize_names: true)
+  end
+
   private
 
   def deflate(string)

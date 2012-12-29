@@ -6,17 +6,11 @@ class TracksController < ApplicationController
   before_filter :find_track, only: [:edit, :update, :destroy, :up, :down]
   before_filter :setup_new_track, only: [:index, :new]
 
-  def index
-  end
-
-  def new
-  end
-
   def create
     @track = current_user.tracks.build(params[:track])
     if @track.save
       @tag = @track.tag
-      redirect_to tag_or_tracks_path, notice: t('views.tracks.messages.created')
+      redirect_to @track.many_days? ? new_track_partition_path(@track) : tag_or_tracks_path, notice: t('views.tracks.messages.created')
     else
       render action: :new
     end

@@ -10,6 +10,7 @@ class Track < ActiveRecord::Base
   }.merge(TRACK_ATTACHMENT_OPTS)
 
   attr_accessible :name, :attachment, :tag_name
+  attr_accessor :output
   attr_writer :tag_name
 
   validates_presence_of :name
@@ -34,6 +35,10 @@ class Track < ActiveRecord::Base
 
   def output
     @output ||= Gpx.parse(self)
+  end
+
+  def many_days?
+    (statistic.end_date.in_time_zone(timezone).to_date - statistic.start_date.in_time_zone(timezone).to_date) > 0
   end
 
 private

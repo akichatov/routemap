@@ -7,7 +7,9 @@ Routemap::Application.routes.draw do
     root to: 'tracks#index'
   end
   root to: "home#index"
-  resources :tracks
+  resources :tracks do
+    resources :partitions, only: [:new, :create]
+  end
   resources :tags, only: [:show] do
     resources :tracks do
       put ':id/up' => 'tracks#up', :as => :up, :on => :collection

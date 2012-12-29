@@ -16,7 +16,8 @@ en:
       kilometre: 'km'
       kilometre_per_hour: 'km/h'
       hour: 'h'
-      minute: 'm'
+      minute: 'min'
+      second: 'sec'
 
     tracks:
       messages:
@@ -66,3 +67,21 @@ en:
         name: Name
         group: Group
         save: Save
+    partitions:
+      it_looks_like: It looks like your track covers more than one day
+      split: Split track by days
+      leave: Leave as is
+      finish: Finish
+
+  activemodel:
+    attributes:
+      partition:
+        selected: "Parts:"
+
+    errors:
+      models:
+        partition:
+          attributes:
+            selected:
+              too_short: Select at least one day
+    

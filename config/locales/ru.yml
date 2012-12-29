@@ -16,7 +16,8 @@ ru:
       kilometre: 'км'
       kilometre_per_hour: 'км/ч'
       hour: 'ч'
-      minute: 'м'
+      minute: 'мин'
+      second: 'сек'
 
     tracks:
       messages:
@@ -66,3 +67,21 @@ ru:
         name: Название
         group: Группа
         save: Сохранить
+
+    partitions:
+      it_looks_like: Трек занимает больше одного дня
+      split: Разбить трек по дням
+      leave: Оставить как есть
+      finish: Готово
+
+  activemodel:
+    attributes:
+      partition:
+        selected: "Части:"
+
+    errors:
+      models:
+        partition:
+          attributes:
+            selected:
+              too_short: Необходимо выбрать хотя бы одну часть

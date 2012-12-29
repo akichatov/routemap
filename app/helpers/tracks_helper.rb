@@ -5,7 +5,24 @@ module TracksHelper
   end
 
   def format_time_diff(value)
-    "#{(value / 60) / 60}:#{'%02d' % ((value / 60) % 60)}"
+    "#{value / 3600}:#{'%02d' % ((value / 60) % 60)}"
+  end
+
+  def format_time_diff_hms(value)
+    hours = value / 3600
+    minutes = (value / 60) % 60
+    seconds = value % 60
+    result = ""
+    if hours > 0
+      result += "#{hours} #{t('views.units.hour')} "
+    end
+    if minutes > 0
+      result += "#{minutes} #{t('views.units.minute')} "
+    end
+    if hours + minutes == 0
+      result += "#{seconds} #{t('views.units.second')} "
+    end
+    result
   end
 
   def format_speed(value)

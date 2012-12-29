@@ -1,0 +1,35 @@
+<p><%= t('views.partitions.it_looks_like') %></p>
+<%= form_for [@track, @partition] do |f| %>
+  <% if @partition.errors.any? %>
+    <div id="error_explanation">
+      <ul>
+      <% @partition.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= label_tag do %>
+    <%= f.radio_button :split, true %>
+    <%= t('views.partitions.split') %>
+  <%- end -%>
+  <%- @partition.parts.keys.each_with_index do |key, index| -%>
+    <%- output = @partition.parts[key ] -%>
+    <div class='partition'>
+      <%= label_tag do %>
+        <%= check_box_tag 'partition[selected][]', index, @partition.selected.include?(index.to_s) %>
+        <%= key %>:
+        <%= format_distance output.distance %>,
+        <%= format_time_diff_hms output.total_time %>
+      <%- end -%>
+    </div>
+  <%- end -%>
+  <%= label_tag do %>
+    <%= f.radio_button :split, false %>
+    <%= t('views.partitions.leave') %>
+  <%- end -%>
+  <p>
+    <%= f.submit t('views.partitions.finish') %>
+  </p>
+<%- end -%>
