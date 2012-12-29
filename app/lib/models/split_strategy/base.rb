@@ -1,8 +1,8 @@
 module SplitStrategy
   class Base
 
-    def split!(version)
-      process(version.to_hash[:points])
+    def split!(track)
+      process(track.version.to_hash[:points], track)
     end
 
   end

@@ -38,7 +38,7 @@ class Partition
 
   def setup_parts
     self.parts = {}
-    groups = SplitStrategy::Day.new.split!(track.version)
+    groups = SplitStrategy::Day.new.split!(track)
     groups.keys.each do |key|
       self.parts[key] = Output.new(groups[key], track)
     end
