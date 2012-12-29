@@ -18,4 +18,13 @@ $(function() {
     $("#flash").hide();
   };
   setTimeout(hideFlash, 10000);
+
+  $("#partition_split_false").click(function() {
+    $("form .partition input").attr("disabled", true);
+  });
+
+  $("#partition_split_true").click(function() {
+    $("form .partition input").attr("disabled", false);
+  });
+
 });

@@ -40,6 +40,10 @@ class Track < ActiveRecord::Base
     (statistic.end_date.in_time_zone(timezone).to_date - statistic.start_date.in_time_zone(timezone).to_date) > 0
   end
 
+  def points
+    version.to_hash[:points]
+  end
+
 private
 
   def has_points

@@ -32,6 +32,10 @@ module TracksHelper
   def track_date(track)
     start_date = track.statistic.start_date.in_time_zone(track.timezone)
     end_date = track.statistic.end_date.in_time_zone(track.timezone)
+    format_date_interval(start_date, end_date)
+  end
+
+  def format_date_interval(start_date, end_date)
     result = ""
     if start_date.year == end_date.year
       result += start_date.strftime("%Y ")

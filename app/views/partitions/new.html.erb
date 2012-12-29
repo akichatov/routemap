@@ -1,4 +1,6 @@
-<p><%= t('views.partitions.it_looks_like') %></p>
+<%- if @track.many_days? -%>
+  <p><%= t('views.partitions.it_looks_like') %></p>
+<%- end -%>
 <%= form_for [@track, @partition] do |f| %>
   <% if @partition.errors.any? %>
     <div id="error_explanation">

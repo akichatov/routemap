@@ -10,7 +10,7 @@
   <trk>
     <name><%= @track.name %></name>
     <trkseg>
-      <%- @track.version.to_hash[:points].each do |point| -%>
+      <%- @track.points.each do |point| -%>
       <trkpt lat="<%= point[:lat] %>" lon="<%= point[:lon] %>">
         <ele><%= point[:ele] %></ele>
         <time><%= Time.at(point[:time]).utc.iso8601 %></time>
