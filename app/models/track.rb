@@ -17,12 +17,11 @@ class Track < ActiveRecord::Base
   validates :attachment, attachment_presence: true
   validate :has_points
 
-  scope :ordered, joins(:statistic).order("tracks.tag_id, tracks.position, statistics.start_date")
+  scope :ordered, joins(:statistic).order("tracks.tag_id, statistics.start_date")
   scope :position_and_start_date_ordered, joins(:statistic).order("tracks.position, statistics.start_date")
   scope :start_date_ordered, joins(:statistic).order("statistics.start_date")
 
   before_create :generate_code
-  after_create :update_position
   before_save   :update_tag, :process_data
 
   def tag_name
