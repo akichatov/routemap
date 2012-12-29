@@ -52,7 +52,8 @@
           <td class='distance'><%= format_speed track.statistic.max_speed %></td>
           <td class='distance'><%= format_speed track.statistic.avg_motion_speed %></td>
           <td class='action'>
-            <%= link_to image_tag('icon_download.png'), track.attachment.url, title: t('views.tracks.index.labels.download') %>
+            <%= link_to image_tag('icon_download.png'), track_path(track, format: :gpx), title: t('views.tracks.index.labels.download') %>
+            <%#= link_to image_tag('icon_download.png'), track.attachment.url, title: t('views.tracks.index.labels.download') %>
           </td>
         </tr>
       <%- end -%>

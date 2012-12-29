@@ -1,4 +1,6 @@
 class TracksController < ApplicationController
+  respond_to :html, :js, :gpx
+
   before_filter :authenticate_user!, except: [:show]
   before_filter :find_tag
   before_filter :find_tags, only: [:index, :create]
@@ -18,6 +20,7 @@ class TracksController < ApplicationController
 
   def show
     @track = Track.find_by_code!(params[:id])
+    respond_with(@track)
   end
 
   def update

@@ -64,3 +64,5 @@ end
 Timezone::Configure.begin do |c|
   c.username = 'trackdojo'
 end
+
+Mime::Type.register "application/gpx", :gpx
