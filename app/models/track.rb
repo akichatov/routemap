@@ -17,6 +17,7 @@ class Track < ActiveRecord::Base
   validate :has_points
 
   scope :ordered, joins(:version).order("tracks.tag_id, versions.start_at")
+  scope :start_at_ordered, joins(:version).order("versions.start_at")
 
   before_create :generate_code
   before_save   :update_tag, :process_data
