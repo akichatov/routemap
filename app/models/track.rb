@@ -1,4 +1,6 @@
 class Track < ActiveRecord::Base
+  include RandomCode
+
   belongs_to :user
   belongs_to :tag
   has_one :version, dependent: :destroy
@@ -19,17 +21,12 @@ class Track < ActiveRecord::Base
   scope :ordered, joins(:version).order("tracks.tag_id, versions.start_at")
   scope :start_at_ordered, joins(:version).order("versions.start_at")
 
-  before_create :generate_code
   before_save   :update_tag, :process_data
 
   delegate *Version::ATTRIBUTES, to: :version
 
   def tag_name
     @tag_name || self.tag.try(:name)
-  end
-
-  def to_param
-    self.code
   end
 
   def output
@@ -53,10 +50,6 @@ private
       @output = nil
       errors.add :attachment, "can't be processed."
     end
-  end
-
-  def generate_code
-    self.code = RandomString.generate
   end
 
   def update_tag
