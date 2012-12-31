@@ -3,10 +3,7 @@ class Output
   SPEED_TIME_LIMIT_SEC = 10
   MOTION_SPEED_LIMIT = 0.35
 
-  attr_reader :min, :max, :points, :distance, :climb, :descent, :name,
-              :total_time, :motion_time, :avg_speed,
-              :max_speed, :avg_motion_speed, :start_date, :end_date, :timezone
-
+  attr_reader *Version::ATTRIBUTES + [:min, :max, :points, :name]
 
   def initialize(points, track)
     @points = points
@@ -37,8 +34,8 @@ private
     @min = {lat: lats.min, lon: lons.min, ele: eles.min}
     @max = {lat: lats.max, lon: lons.max, ele: eles.max}
     @total_time = @points.last[:time] - @points.first[:time]
-    @start_date = Time.at(@points.first[:time]).utc
-    @end_date = Time.at(@points.last[:time]).utc
+    @start_at = Time.at(@points.first[:time]).utc
+    @end_at = Time.at(@points.last[:time]).utc
     @timezone = Timezone::Zone.new(latlon: [@points.first[:lat], @points.first[:lon]]).zone
 
     previous_point = @points.first

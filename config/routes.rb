@@ -11,9 +11,6 @@ Routemap::Application.routes.draw do
     resources :partitions, only: [:new, :create]
   end
   resources :tags, only: [:show] do
-    resources :tracks do
-      put ':id/up' => 'tracks#up', :as => :up, :on => :collection
-      put ':id/down' => 'tracks#down', :as => :down, :on => :collection
-    end
+    resources :tracks
   end
 end

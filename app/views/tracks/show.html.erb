@@ -22,7 +22,7 @@
       <%- @tag.tracks.ordered.each do |track| -%>
         <tr>
           <th><div><%= link_to track.name, track %></div></th>
-          <td><%= format_distance track.statistic.distance %></td>
+          <td><%= format_distance track.distance %></td>
         </tr>
       <%- end -%>
     <%- end -%>
@@ -49,19 +49,19 @@
     <%- if @track -%>
       <tr>
         <th><%= t('views.tracks.show.labels.total_time') %>:</th>
-        <td><span><%= format_time_diff @track.statistic.total_time %></span></td>
+        <td><span><%= format_time_diff @track.total_time %></span></td>
       </tr>
       <tr>
         <th><%= t('views.tracks.show.labels.motion_time') %>:</th>
-        <td><span><%= format_time_diff @track.statistic.motion_time %></span></td>
+        <td><span><%= format_time_diff @track.motion_time %></span></td>
       </tr>
       <tr>
         <th><%= t('views.tracks.show.labels.max_speed') %>:</th>
-        <td><span><%= format_speed @track.statistic.max_speed %></span></td>
+        <td><span><%= format_speed @track.max_speed %></span></td>
       </tr>
       <tr>
         <th><%= t('views.tracks.show.labels.avg_motion_speed') %>:</th>
-        <td><span><%= format_speed @track.statistic.avg_motion_speed %></span></td>
+        <td><span><%= format_speed @track.avg_motion_speed %></span></td>
       </tr>
     <%- end -%>
     <tr>

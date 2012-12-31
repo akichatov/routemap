@@ -5,7 +5,7 @@ class TracksController < ApplicationController
   before_filter :find_tag
   before_filter :find_tags, only: [:index, :create]
   before_filter :find_tracks, only: [:index, :create]
-  before_filter :find_track, only: [:edit, :update, :destroy, :up, :down]
+  before_filter :find_track, only: [:edit, :update, :destroy]
   before_filter :setup_new_track, only: [:index, :new]
 
   def create
@@ -31,31 +31,12 @@ class TracksController < ApplicationController
     end
   end
 
-  def up
-    move_track(-1)
-    redirect_to tag_or_tracks_path
-  end
-
-  def down
-    move_track(1)
-    redirect_to tag_or_tracks_path
-  end
-
   def destroy
     @track.destroy
     redirect_to tag_or_tracks_path, notice: t('views.tracks.messages.deleted')
   end
 
 private
-
-  def move_track(offset)
-    track_index = current_user.tracks.position_and_start_date_ordered.index(@track)
-    previous_track = current_user.tracks.position_and_start_date_ordered[track_index + offset]
-    if previous_track
-      @track.update_column(:position, track_index + offset)
-      previous_track.update_column(:position, track_index)
-    end
-  end
 
   def find_tag
     @tag = current_user.tags.find_by_code!(params[:tag_id]) if params[:tag_id]

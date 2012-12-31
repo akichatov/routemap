@@ -46,11 +46,11 @@
             <td><%= track.tag_name %></td>
           <%- end -%>
           <td class='track_date'><%= track_date track %></td>
-          <td class='distance'><%= format_distance track.statistic.distance %></td>
-          <td class='distance'><%= format_time_diff track.statistic.total_time %></td>
-          <td class='distance'><%= format_time_diff track.statistic.motion_time %></td>
-          <td class='distance'><%= format_speed track.statistic.max_speed %></td>
-          <td class='distance'><%= format_speed track.statistic.avg_motion_speed %></td>
+          <td class='distance'><%= format_distance track.distance %></td>
+          <td class='distance'><%= format_time_diff track.total_time %></td>
+          <td class='distance'><%= format_time_diff track.motion_time %></td>
+          <td class='distance'><%= format_speed track.max_speed %></td>
+          <td class='distance'><%= format_speed track.avg_motion_speed %></td>
           <td class='action'>
             <%= link_to image_tag('icon_download.png'), track_path(track, format: :gpx), title: t('views.tracks.index.labels.download') %>
             <%#= link_to image_tag('icon_download.png'), track.attachment.url, title: t('views.tracks.index.labels.download') %>

@@ -1,6 +1,6 @@
 class Tag < ActiveRecord::Base
   belongs_to :user
-  has_many :tracks, include: :statistic
+  has_many :tracks, include: :version
 
   before_create :generate_code
 

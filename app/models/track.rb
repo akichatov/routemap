@@ -1,7 +1,6 @@
 class Track < ActiveRecord::Base
   belongs_to :user
   belongs_to :tag
-  has_one :statistic, dependent: :destroy
   has_one :version, dependent: :destroy
 
   has_attached_file :attachment, {
@@ -17,12 +16,12 @@ class Track < ActiveRecord::Base
   validates :attachment, attachment_presence: true
   validate :has_points
 
-  scope :ordered, joins(:statistic).order("tracks.tag_id, statistics.start_date")
-  scope :position_and_start_date_ordered, joins(:statistic).order("tracks.position, statistics.start_date")
-  scope :start_date_ordered, joins(:statistic).order("statistics.start_date")
+  scope :ordered, joins(:version).order("tracks.tag_id, versions.start_at")
 
   before_create :generate_code
   before_save   :update_tag, :process_data
+
+  delegate *Version::ATTRIBUTES, to: :version
 
   def tag_name
     @tag_name || self.tag.try(:name)
@@ -37,7 +36,7 @@ class Track < ActiveRecord::Base
   end
 
   def many_days?
-    (statistic.end_date.in_time_zone(timezone).to_date - statistic.start_date.in_time_zone(timezone).to_date) > 0
+    (end_at.in_time_zone(timezone).to_date - start_at.in_time_zone(timezone).to_date) > 0
   end
 
   def points
@@ -65,20 +64,10 @@ private
 
   def process_data
     if attachment.dirty?
-      self.timezone = output.timezone
-
-      self.statistic ||= Statistic.new(track: self)
-      self.statistic.init_by(output)
-      self.statistic.save! unless self.statistic.new_record?
-
       self.version ||= Version.new(track: self)
       self.version.init_by(output)
       self.version.save! unless self.version.new_record?
     end
-  end
-
-  def update_position
-    self.update_column(:position, user.tracks.start_date_ordered.index(self))
   end
 
 end

@@ -30,9 +30,7 @@ module TracksHelper
   end
 
   def track_date(track)
-    start_date = track.statistic.start_date.in_time_zone(track.timezone)
-    end_date = track.statistic.end_date.in_time_zone(track.timezone)
-    format_date_interval(start_date, end_date)
+    format_date_interval(track.start_at.in_time_zone(track.timezone), track.end_at.in_time_zone(track.timezone))
   end
 
   def format_date_interval(start_date, end_date)
