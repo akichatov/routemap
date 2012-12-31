@@ -20,6 +20,7 @@
   </div>
   <div id='track_list'>
     <h2><%= t('views.tracks.index.labels.tracks') %></h2>
+    <%= form_tag tracks_multi_view_path do %>
     <table>
       <thead>
         <tr>
@@ -40,6 +41,7 @@
       <tbody>
       <%- @tracks.each_with_index do |track, index| -%>
         <tr>
+          <td><%= check_box_tag 'tracks[]', track.code, false  %></td>
           <td><%= index + 1 %>.</td>
           <td><%= link_to track.name, track %></td>
           <%- unless @tag -%>
@@ -57,7 +59,9 @@
           </td>
         </tr>
       <%- end -%>
+      <tr><td colspan='8'><%= submit_tag 'View' %></td></tr>
       </tbody>
     </table>
+    <%- end -%>
   </div>
 </div>

@@ -10,6 +10,7 @@ Routemap::Application.routes.draw do
   resources :tracks do
     resources :partitions, only: [:new, :create]
   end
+  post 'tracks/multi_view', to: 'tracks#multi_view'
   resources :tags, only: [:show] do
     resources :tracks
   end

@@ -8,6 +8,11 @@ class TracksController < ApplicationController
   before_filter :find_track, only: [:edit, :update, :destroy]
   before_filter :setup_new_track, only: [:index, :new]
 
+  def multi_view
+    redirect_to tracks_path and return unless params[:tracks]
+    redirect_to track_path(id: params[:tracks].join(','))
+  end
+
   def create
     @track = current_user.tracks.build(params[:track])
     if @track.save
@@ -19,8 +24,15 @@ class TracksController < ApplicationController
   end
 
   def show
-    @track = Track.find_by_code!(params[:id])
-    respond_with(@track)
+    ids = params[:id].split(',')
+    if ids.size > 1
+      @tag = Tag.new(name: 'tracks', code: params[:id])
+      @tag.tracks = Track.where(code: ids)
+      render 'tags/show'
+    else
+      @track = Track.find_by_code!(ids.first)
+      respond_with(@track)
+    end
   end
 
   def update

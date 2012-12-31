@@ -1,5 +1,5 @@
 Map.tracks = [
-  <%- @tag.tracks.ordered.each do |track| -%>
+  <%- (@tag.new_record? ? @tag.tracks : @tag.tracks.ordered).each do |track| -%>
     <%= track.version.raw_data.html_safe %>,
   <%- end -%>
   null
