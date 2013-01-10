@@ -23,6 +23,7 @@ var Map = function() {
   $(document).bind('selection:clear', $.proxy(this.clearSelection, this));
   $(document).bind('point:removed', $.proxy(this.pointRemoved, this));
   $(document).bind('modifier:clicked', $.proxy(this.modifierClicked, this));
+  $(document).bind('modifier:over', $.proxy(this.modifierOver, this));
   $("#undoLink").click($.proxy(this.undoClicked, this));
   $("#saveRemovals").click($.proxy(this.saveRemovals, this));
   this.pointRemovedCallbackBound = $.proxy(this.pointRemovedCallback, this);
@@ -85,22 +86,26 @@ Map.prototype.initTrack = function(track, trackIndex) {
       point.fdist += dist;
       point.time = new timezoneJS.Date(point.time * 1000, track.timezone).toString();
       point.fullIndex = fullIndex + i;
-      this.points.push(point);
     }
+    this.points.push(point);
   }
 };
 
 Map.prototype.elevationOver = function(event, point) {
   clearTimeout(this.elevationOverTimeout);
   if(point) {
-    $("#time").html(point.time);
-    $("#pointEle").html(point.ele.toFixed(2));
-    $("#pointMeters").html(point.fdist.toFixed(2));
-    $("#pointKms").html((point.fdist / 1000).toFixed(2));
-    $("#pointSpeed").html(point.speed);
+    this.showPointInfo(point);
   }
   this.doElevationOver(event, point);
   // this.elevationOverTimeout = setTimeout($.proxy(this.doElevationOver, this, event, point), 10);
+};
+
+Map.prototype.showPointInfo = function(point) {
+  $("#time").html(point.time);
+  $("#pointEle").html(point.ele.toFixed(2));
+  $("#pointMeters").html(point.fdist.toFixed(2));
+  $("#pointKms").html((point.fdist / 1000).toFixed(2));
+  $("#pointSpeed").html(point.speed);
 };
 
 Map.prototype.doElevationOver = function(event, point) {
@@ -128,6 +133,14 @@ Map.prototype.clearSelection = function(event, point) {
 Map.prototype.modifierClicked = function(event, pointIndex) {
   if(this.points.length - this.removedPoints.length > 2) {
     $(document).trigger("point:removed", pointIndex);
+  }
+};
+
+Map.prototype.modifierOver = function(event, pointIndex) {
+  var point = this.points[pointIndex];
+  if(point) {
+    this.showPointInfo(point);
+    // $(document).trigger("elevation:over", point);
   }
 };
 

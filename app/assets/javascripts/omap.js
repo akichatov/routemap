@@ -104,12 +104,15 @@ OMap.prototype.init = function() {
       if(point) {
         var geometry = new OpenLayers.Geometry.Point(point.lon, point.lat).transform(this.fromProjection, this.omap.getProjectionObject());
         line.lineString.addPoint(geometry);
-        geometry.line = line;
-        modifierPointIcon = new OpenLayers.Icon(this.options.modifierIconUrl, this.modifierPointSize, this.modifierPointOffset);
-        modifierMarker = new OpenLayers.Marker(new OpenLayers.LonLat(geometry.x, geometry.y), modifierPointIcon);
-        modifierMarker.events.register('click', point.fullIndex, this.modifierClicked);
-        this.modifierMarkers.addMarker(modifierMarker);
-        this.points[point.fullIndex] = {geometry: geometry, modifierMarker: modifierMarker};
+        if(Map.edit_mode) {
+          geometry.line = line;
+          modifierPointIcon = new OpenLayers.Icon(this.options.modifierIconUrl, this.modifierPointSize, this.modifierPointOffset);
+          modifierMarker = new OpenLayers.Marker(new OpenLayers.LonLat(geometry.x, geometry.y), modifierPointIcon);
+          modifierMarker.events.register('click', point.fullIndex, this.modifierClicked);
+          modifierMarker.events.register('mouseover', point.fullIndex, this.modifierOver);
+          this.modifierMarkers.addMarker(modifierMarker);
+          this.points[point.fullIndex] = {geometry: geometry, modifierMarker: modifierMarker};
+        }
       }
     }
     this.omap.addLayer(line.vectorLayer);
@@ -153,6 +156,11 @@ OMap.prototype.zoomed = function() {
 
 OMap.prototype.modifierClicked = function(evt) {
   $(document).trigger("modifier:clicked", this);
+  OpenLayers.Event.stop(evt);
+}
+
+OMap.prototype.modifierOver = function(evt) {
+  $(document).trigger("modifier:over", this);
   OpenLayers.Event.stop(evt);
 }
 

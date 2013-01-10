@@ -123,8 +123,10 @@
     <canvas id="canvasElement"></canvas>
   </div>
 </div>
+<%- if @track -%>
 <script type="text/javascript">
   /* <![CDATA[ */
   Map.edit_mode = <%= @track.user == current_user && controller.action_name == 'edit' %>;
   /* ]]> */
 </script>
+<%- end -%>

@@ -15,7 +15,7 @@ class TracksController < ApplicationController
 
   def slice
     if params[:excludes] && params[:excludes].size > 0
-      @track.version.without(params[:excludes])
+      @track.version.without(params[:excludes], true)
     end
   end
 

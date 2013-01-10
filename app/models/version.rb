@@ -24,10 +24,10 @@ class Version < ActiveRecord::Base
     self.data = deflate(json)
   end
 
-  def without(indeces)
+  def without(indeces, nullify=false)
     points = to_hash[:points]
     indeces.each{|i| points[i.to_i] = nil }
-    init_by Output.new(points, track)
+    init_by Output.new(nullify ? points : points.compact, track)
     self
   end
 
