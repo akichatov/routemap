@@ -28,6 +28,7 @@ var Map = function() {
   $("#saveRemovals").click($.proxy(this.saveRemovals, this));
   this.pointRemovedCallbackBound = $.proxy(this.pointRemovedCallback, this);
   this.saveRemovalsCallbackBound = $.proxy(this.saveRemovalsCallback, this);
+  this.doSliceTrackBound = $.proxy(this.doSliceTrack, this);
   this.removedPoints = [];
   this.omap = new OMap(this.options, this);
   this.elevator = new Elevator(this);
@@ -75,15 +76,17 @@ Map.prototype.initTrack = function(track, trackIndex) {
   var dist = 0.0;
   var fullIndex = 0;
   for(var i = 1; i <= trackIndex; i++) {
-    var track = Map.tracks[trackIndex - i];
-    fullIndex += track.points.length;
-    dist += track.distance;
+    var t = Map.tracks[trackIndex - i];
+    fullIndex += t.points.length;
+    dist += t.distance;
   }
   for(var i = 0; i < track.points.length; i++) {
     var point = track.points[i];
     if(point) {
       point.track = track;
       point.fdist += dist;
+      if(i == track.points.length -1) {
+      }
       point.time = new timezoneJS.Date(point.time * 1000, track.timezone).toString();
       point.fullIndex = fullIndex + i;
     }
@@ -162,6 +165,11 @@ Map.prototype.undoClicked = function(event) {
 };
 
 Map.prototype.sliceTrack = function() {
+  clearTimeout(this.sliceTrackTimeout);
+  this.sliceTrackTimeout = setTimeout(this.doSliceTrackBound, 1000);
+};
+
+Map.prototype.doSliceTrack = function() {
   $("#undo").hide();
   $("#sliceLoader").show();
   $.post(Map.slice_path, {
