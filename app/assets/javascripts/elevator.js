@@ -57,12 +57,14 @@ Elevator.prototype.calcMinMax = function() {
   this.minX = this.maxX = this.minY = this.maxY = null;
   for(var i = 0; i < this.map.points.length; i++) {
     var point = this.map.points[i];
-    var valueX = point.fdist;
-    var valueY = point[this.yattr];
-    this.minX = this.minX && this.minX < valueX ? this.minX : valueX;
-    this.maxX = this.maxX && this.maxX > valueX ? this.maxX : valueX;
-    this.minY = this.minY && this.minY < valueY ? this.minY : valueY;
-    this.maxY = this.maxY && this.maxY > valueY ? this.maxY : valueY;
+    if(point) {
+      var valueX = point.fdist;
+      var valueY = point[this.yattr];
+      this.minX = this.minX && this.minX < valueX ? this.minX : valueX;
+      this.maxX = this.maxX && this.maxX > valueX ? this.maxX : valueX;
+      this.minY = this.minY && this.minY < valueY ? this.minY : valueY;
+      this.maxY = this.maxY && this.maxY > valueY ? this.maxY : valueY;
+    }
   }
 };
 
@@ -90,11 +92,13 @@ Elevator.prototype.processScreenPoints = function() {
   this.factorY = this.visibleHeight / (diffY == 0 ? 1 : diffY);
   for(var i = 0; i < this.map.points.length; i++) {
     var point = this.map.points[i];
-    var screenPoint = this.calculateScreenPoint(point);
-    var existent = this.screenPoints[screenPoint.x];
-    if(!existent || existent.point[this.yattr] < point[this.yattr]) {
-      this.screenPoints[screenPoint.x] = screenPoint;
-      screenPoint.point = point;
+    if(point) {
+      var screenPoint = this.calculateScreenPoint(point);
+      var existent = this.screenPoints[screenPoint.x];
+      if(!existent || existent.point[this.yattr] < point[this.yattr]) {
+        this.screenPoints[screenPoint.x] = screenPoint;
+        screenPoint.point = point;
+      }
     }
   }
 }

@@ -10,8 +10,10 @@ Routemap::Application.routes.draw do
   resources :tracks do
     resources :partitions, only: [:new, :create]
   end
-  post 'tracks/multi_view', to: 'tracks#multi_view'
   resources :tags, only: [:show] do
     resources :tracks
   end
+  post 'tracks/multi_view', to: 'tracks#multi_view'
+  post 'tracks/:id/slice', to: 'tracks#slice', as: :slice_track
+  post 'tracks/:id/save_slice', to: 'tracks#save_slice', as: :save_slice_track
 end

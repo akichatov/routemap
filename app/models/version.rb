@@ -5,14 +5,15 @@ class Version < ActiveRecord::Base
                 :total_time, :motion_time, :avg_motion_speed, :max_speed]
 
   def init_by(output)
-    set_data_json(output.to_json)
+    @output_json = output.to_json
+    set_data_json(@output_json)
     ATTRIBUTES.each do |name|
       send("#{name.to_s}=", output.send(name))
     end
   end
 
   def raw_data
-    inflate(self.data)
+    @output_json || inflate(data)
   end
 
   def to_hash
@@ -21,6 +22,13 @@ class Version < ActiveRecord::Base
 
   def set_data_json(json)
     self.data = deflate(json)
+  end
+
+  def without(indeces)
+    points = to_hash[:points]
+    indeces.each{|i| points[i.to_i] = nil }
+    init_by Output.new(points, track)
+    self
   end
 
   private

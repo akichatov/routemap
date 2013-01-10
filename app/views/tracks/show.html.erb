@@ -15,7 +15,9 @@
     <%- end -%>
     <%- if @track -%>
       <tr>
-        <td colspan="2"><%= track_date @track %></td>
+        <td colspan="2">
+          <span id="track_date"><%= track_date @track %></span>
+        </td>
       </tr>
     <%- end -%>
     <%- if @tag -%>
@@ -49,19 +51,19 @@
     <%- if @track -%>
       <tr>
         <th><%= t('views.tracks.show.labels.total_time') %>:</th>
-        <td><span><%= format_time_diff @track.total_time %></span></td>
+        <td><span id="total_time"><%= format_time_diff @track.total_time %></span></td>
       </tr>
       <tr>
         <th><%= t('views.tracks.show.labels.motion_time') %>:</th>
-        <td><span><%= format_time_diff @track.motion_time %></span></td>
+        <td><span id="motion_time"><%= format_time_diff @track.motion_time %></span></td>
       </tr>
       <tr>
         <th><%= t('views.tracks.show.labels.max_speed') %>:</th>
-        <td><span><%= format_speed @track.max_speed %></span></td>
+        <td><span id="max_speed"><%= format_speed @track.max_speed %></span></td>
       </tr>
       <tr>
         <th><%= t('views.tracks.show.labels.avg_motion_speed') %>:</th>
-        <td><span><%= format_speed @track.avg_motion_speed %></span></td>
+        <td><span id="avg_motion_speed"><%= format_speed @track.avg_motion_speed %></span></td>
       </tr>
     <%- end -%>
     <tr>
@@ -79,7 +81,15 @@
       <th><%= t('views.tracks.show.labels.alt_end') %>:</th>
       <td><span id="selectionEndEle"></span> <%= t('views.units.metre') %></td>
     </tr>
-  </table>  
+  </table>
+  <p id="undo" style="display: none;">
+    <%= link_to t('views.tracks.show.labels.undo'), '#', id: 'undoLink' %>
+    <span id="undoCount"></span>
+    <button id='saveRemovals'>Save</button>
+  </p>
+  <p id="sliceLoader" style="display: none;">
+    <img src="/assets/ajax-loader.gif" />
+  </p>
 </div>
 <div id="maps">
   <div id="omap" class="map"></div>
@@ -113,3 +123,8 @@
     <canvas id="canvasElement"></canvas>
   </div>
 </div>
+<script type="text/javascript">
+  /* <![CDATA[ */
+  Map.edit_mode = <%= @track.user == current_user && controller.action_name == 'edit' %>;
+  /* ]]> */
+</script>

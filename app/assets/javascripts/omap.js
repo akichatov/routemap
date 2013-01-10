@@ -10,7 +10,7 @@ var OMap = function(options, map) {
     projection: this.toProjection,
     displayProjection: this.fromProjection,
     eventListeners: {
-      "zoomend": $.proxy(this.simplifyByZoom, this)
+      "zoomend": $.proxy(this.zoomed, this)
     }
   });
   var osm = new OpenLayers.Layer.OSM();
@@ -42,9 +42,10 @@ var OMap = function(options, map) {
   this.omap.addLayer(bingRoad);
   this.omap.addLayer(bingSatellite);
   this.omap.addLayer(bingHybrid);
-  this.omap.zoomToExtent(this.getBounds());
   this.omap.addControl(new OpenLayers.Control.LayerSwitcher());
   this.omap.addControl(new OpenLayers.Control.FullScreen());
+  $(document).bind('point:removed', $.proxy(this.pointRemoved, this));
+  $(document).bind('point:returned', $.proxy(this.pointReturned, this));
 };
 
 OMap.prototype.addYandex = function() {
@@ -65,33 +66,56 @@ OMap.prototype.addYandex = function() {
 }
 
 OMap.prototype.init = function() {
-  this.initialized = true;
+  if(this.initialized) {
+    for(var i = 0; i < this.lines.length; i++) {
+      var line = this.lines[i];
+      this.omap.removeLayer(line.vectorLayer);
+    }
+    this.modifierMarkers.clearMarkers();
+    this.omap.removeLayer(this.modifierMarkers);
+  } else {
+    this.modifierMarkers = new OpenLayers.Layer.Markers("Modifiers");
+    this.modifierPointSize = new OpenLayers.Size(12, 12);
+    this.modifierPointOffset = new OpenLayers.Pixel(-6, -6);
+    
+    this.markers = new OpenLayers.Layer.Markers("Markers");
+    this.markerSize = new OpenLayers.Size(32, 37);
+    this.markerOffset = new OpenLayers.Pixel(-(this.markerSize.w/2), -this.markerSize.h);
+    this.pointMarker = new OpenLayers.Marker(null, new OpenLayers.Icon(this.options.pointIconUrl, this.markerSize, this.markerOffset));
+    this.startMarker = new OpenLayers.Marker(null, new OpenLayers.Icon(this.options.startIconUrl, this.markerSize, this.markerOffset));
+    this.endMarker = new OpenLayers.Marker(null, new OpenLayers.Icon(this.options.endIconUrl, this.markerSize, this.markerOffset));
+    this.omap.addLayer(this.markers);
+    this.omap.zoomToExtent(this.getBounds());
+  }
+  this.lines = [];
+  this.points = [];
   for(var i = 0; i < Map.tracks.length; i++) {
     var track = Map.tracks[i];
-    var line = [];
+    var line = {};
     this.lines.push(line);
     line.vectorLayer = new OpenLayers.Layer.Vector(track.name, {style: {
       strokeColor: "#" + this.options.strokeColor,
       strokeWidth: this.options.strokeWeight,
       strokeOpacity: this.options.strokeOpacity
     }});
+    line.lineString = new OpenLayers.Geometry.LineString();
     for(var j = 0; j < track.points.length; j++) {
       var point = track.points[j];
-      var geometry = new OpenLayers.Geometry.Point(point.lon, point.lat).transform(this.fromProjection, this.omap.getProjectionObject());
-      line.push(geometry);
+      if(point) {
+        var geometry = new OpenLayers.Geometry.Point(point.lon, point.lat).transform(this.fromProjection, this.omap.getProjectionObject());
+        line.lineString.addPoint(geometry);
+        geometry.line = line;
+        modifierPointIcon = new OpenLayers.Icon(this.options.modifierIconUrl, this.modifierPointSize, this.modifierPointOffset);
+        modifierMarker = new OpenLayers.Marker(new OpenLayers.LonLat(geometry.x, geometry.y), modifierPointIcon);
+        modifierMarker.events.register('click', point.fullIndex, this.modifierClicked);
+        this.modifierMarkers.addMarker(modifierMarker);
+        this.points[point.fullIndex] = {geometry: geometry, modifierMarker: modifierMarker};
+      }
     }
-    line.lineString = new OpenLayers.Geometry.LineString(line);
-    simplified = line.lineString.simplify(this.getTolerance());
-    line.vectorLayer.addFeatures([new OpenLayers.Feature.Vector(simplified)]);
     this.omap.addLayer(line.vectorLayer);
   }
-  this.markers = new OpenLayers.Layer.Markers("Markers");
-  this.markerSize = new OpenLayers.Size(32, 37);
-  this.markerOffset = new OpenLayers.Pixel(-(this.markerSize.w/2), -this.markerSize.h);
-  this.pointMarker = new OpenLayers.Marker(null, new OpenLayers.Icon(this.options.pointIconUrl, this.markerSize, this.markerOffset));
-  this.startMarker = new OpenLayers.Marker(null, new OpenLayers.Icon(this.options.startIconUrl, this.markerSize, this.markerOffset));
-  this.endMarker = new OpenLayers.Marker(null, new OpenLayers.Icon(this.options.endIconUrl, this.markerSize, this.markerOffset));
-  this.omap.addLayer(this.markers);
+  this.zoomed();
+  this.initialized = true;
 };
 
 OMap.prototype.getTolerance = function() {
@@ -111,6 +135,43 @@ OMap.prototype.simplifyByZoom = function() {
     line.vectorLayer.addFeatures([new OpenLayers.Feature.Vector(line.lineString.simplify(this.getTolerance()))])
   }
 };
+
+OMap.prototype.zoomed = function() {
+  this.simplifyByZoom();
+  if(Map.edit_mode) {
+    if(this.omap.getNumZoomLevels() - this.omap.getZoom() > 3) {
+      if(this.omap.getLayerIndex(this.modifierMarkers) > -1) {
+        this.omap.removeLayer(this.modifierMarkers);
+      }
+    } else {
+      if(this.omap.getLayerIndex(this.modifierMarkers) < 0) {
+        this.omap.addLayer(this.modifierMarkers);
+      }
+    }
+  }
+}
+
+OMap.prototype.modifierClicked = function(evt) {
+  $(document).trigger("modifier:clicked", this);
+  OpenLayers.Event.stop(evt);
+}
+
+OMap.prototype.pointRemoved = function(evt, index) {
+  var o = this.points[index];
+  o.removedIndex = _.indexOf(o.geometry.line.lineString.components, o.geometry);
+  o.geometry.line.lineString.removePoint(o.geometry);
+  this.modifierMarkers.removeMarker(o.modifierMarker);
+  o.geometry.line.vectorLayer.removeFeatures(o.geometry.line.vectorLayer.features);
+  o.geometry.line.vectorLayer.addFeatures([new OpenLayers.Feature.Vector(o.geometry.line.lineString.simplify(this.getTolerance()))]);
+}
+
+OMap.prototype.pointReturned = function(evt, index) {
+  var o = this.points[index];
+  o.geometry.line.lineString.addPoint(o.geometry, o.removedIndex);
+  this.modifierMarkers.addMarker(o.modifierMarker);
+  o.geometry.line.vectorLayer.removeFeatures(o.geometry.line.vectorLayer.features);
+  o.geometry.line.vectorLayer.addFeatures([new OpenLayers.Feature.Vector(o.geometry.line.lineString.simplify(this.getTolerance()))]);
+}
 
 OMap.prototype.elevationOver = function(point) {
   if(point) {
@@ -157,7 +218,9 @@ OMap.prototype.getSelectionBounds = function() {
   var bounds = new OpenLayers.Bounds();
   for(var i = 0; i < points.length; i++) {
     var point = points[i];
-    bounds.extend(new OpenLayers.LonLat(point.lon, point.lat).transform(this.fromProjection, this.omap.getProjectionObject()));
+    if(point) {
+      bounds.extend(new OpenLayers.LonLat(point.lon, point.lat).transform(this.fromProjection, this.omap.getProjectionObject()));
+    }
   }
   return bounds;
 };

@@ -1,1 +1,4 @@
 Map.tracks = [<%= @track.version.raw_data.html_safe %>];
+Map.track_path = "<%= track_path(@track) %>";
+Map.slice_path = "<%= slice_track_path(@track, format: :js) %>";
+Map.save_slice_path = "<%= save_slice_track_path(@track, format: :js) %>";

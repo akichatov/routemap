@@ -1,0 +1,6 @@
+Map.tracks = [<%= @track.version.raw_data.html_safe %>];
+$("#track_date").html("<%= track_date @track %>");
+$("#total_time").html("<%= format_time_diff @track.total_time %>");
+$("#motion_time").html("<%= format_time_diff @track.motion_time %>");
+$("#max_speed").html("<%= format_speed @track.max_speed %>");
+$("#avg_motion_speed").html("<%= format_speed @track.avg_motion_speed %>");

@@ -5,12 +5,25 @@ class TracksController < ApplicationController
   before_filter :find_tag
   before_filter :find_tags, only: [:index, :create]
   before_filter :find_tracks, only: [:index, :create]
-  before_filter :find_track, only: [:edit, :update, :destroy]
+  before_filter :find_track, only: [:edit, :update, :destroy, :slice, :save_slice]
   before_filter :setup_new_track, only: [:index, :new]
 
   def multi_view
     redirect_to tracks_path and return unless params[:tracks]
     redirect_to track_path(id: params[:tracks].join(','))
+  end
+
+  def slice
+    if params[:excludes] && params[:excludes].size > 0
+      @track.version.without(params[:excludes])
+    end
+  end
+
+  def save_slice
+    if params[:excludes] && params[:excludes].size > 0
+      @track.version.without(params[:excludes]).save!
+    end
+    render nothing: true
   end
 
   def create
