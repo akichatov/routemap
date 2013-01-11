@@ -48,4 +48,4 @@ aak:
   database: routemap
   pool: 5
   username: root
-  password: epyfnm
+  password:
