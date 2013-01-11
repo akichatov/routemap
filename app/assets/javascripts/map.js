@@ -35,41 +35,32 @@ var Map = function() {
 };
 
 Map.prototype.init = function() {
-  this.points = [];
   this.initTracks();
-  this.metersPerPixel = this.tracks_distance / this.elevator.visibleWidth;
+  this.points = [];
   for(var i = 0; i < Map.tracks.length; i++) {
     this.initTrack(Map.tracks[i], i);
   }
   this.elevator.init();
-  // this.omap.init();
-  $("#undoCount").html(this.removedPoints.length);
-  $("#undo").toggle(this.removedPoints.length > 0);
-  $("#distance_km").html((this.tracks_distance / 1000).toFixed(2));
-  $("#ele_min").html(this.min.ele);
-  $("#ele_max").html(this.max.ele);
-  $("#climb").html(this.climb.toFixed(2));
-  $("#descent").html(this.descent.toFixed(2));
+  this.updateTrackInfo();
 };
 
 Map.prototype.initTracks = function() {
-  this.tracks_distance = 0;
-  this.climb = 0;
-  this.descent = 0;
-  this.min = {lat: Map.tracks[0].min.lat, lon: Map.tracks[0].min.lon, ele: Map.tracks[0].min.ele};
-  this.max = {lat: Map.tracks[0].max.lat, lon: Map.tracks[0].max.lon, ele: Map.tracks[0].max.ele};
-  for(var i = 0; i < Map.tracks.length; i++) {
-    var track = Map.tracks[i];
-    this.tracks_distance += track.distance;
-    this.climb += track.climb;
-    this.descent += track.descent;
-    this.min.lat = this.min.lat > track.min.lat ? track.min.lat : this.min.lat;
-    this.max.lat = this.max.lat < track.max.lat ? track.max.lat : this.max.lat;
-    this.min.lon = this.min.lon > track.min.lon ? track.min.lon : this.min.lon;
-    this.max.lon = this.max.lon < track.max.lon ? track.max.lon : this.max.lon;
-    this.min.ele = this.min.ele > track.min.ele ? track.min.ele : this.min.ele;
-    this.max.ele = this.max.ele < track.max.ele ? track.max.ele : this.max.ele;
-  }
+  var minIterator = function(t) { return t.min[this.toString()] };
+  var maxIterator = function(t) { return t.max[this.toString()] };
+  var sumIterator = function(sum, t) { return sum + t[this.toString()] };
+  this.tracks_distance = _.reduce(Map.tracks, sumIterator, 0, 'distance');
+  this.climb = _.reduce(Map.tracks, sumIterator, 0, 'climb');
+  this.descent = _.reduce(Map.tracks, sumIterator, 0, 'descent');
+  this.min = {
+    lat: _.min(Map.tracks, minIterator, 'lat').min.lat,
+    lon: _.min(Map.tracks, minIterator, 'lon').min.lon,
+    ele: _.min(Map.tracks, minIterator, 'ele').min.ele
+  };
+  this.max = {
+    lat: _.max(Map.tracks, maxIterator, 'lat').max.lat,
+    lon: _.max(Map.tracks, maxIterator, 'lon').max.lon,
+    ele: _.max(Map.tracks, maxIterator, 'ele').max.ele
+  };
 };
 
 Map.prototype.initTrack = function(track, trackIndex) {
@@ -85,8 +76,6 @@ Map.prototype.initTrack = function(track, trackIndex) {
     if(point) {
       point.track = track;
       point.fdist += dist;
-      if(i == track.points.length -1) {
-      }
       point.time = new timezoneJS.Date(point.time * 1000, track.timezone).toString();
       point.fullIndex = fullIndex + i;
     }
@@ -95,15 +84,13 @@ Map.prototype.initTrack = function(track, trackIndex) {
 };
 
 Map.prototype.elevationOver = function(event, point) {
-  clearTimeout(this.elevationOverTimeout);
   if(point) {
-    this.showPointInfo(point);
+    this.updatePointInfo(point);
+    this.omap.elevationOver(point);
   }
-  this.doElevationOver(event, point);
-  // this.elevationOverTimeout = setTimeout($.proxy(this.doElevationOver, this, event, point), 10);
 };
 
-Map.prototype.showPointInfo = function(point) {
+Map.prototype.updatePointInfo = function(point) {
   $("#time").html(point.time);
   $("#pointEle").html(point.ele.toFixed(2));
   $("#pointMeters").html(point.fdist.toFixed(2));
@@ -111,8 +98,14 @@ Map.prototype.showPointInfo = function(point) {
   $("#pointSpeed").html(point.speed);
 };
 
-Map.prototype.doElevationOver = function(event, point) {
-  this.omap.elevationOver(point);
+Map.prototype.updateTrackInfo = function() {
+  $("#undoCount").html(this.removedPoints.length);
+  $("#undo").toggle(this.removedPoints.length > 0);
+  $("#distance_km").html((this.tracks_distance / 1000).toFixed(2));
+  $("#ele_min").html(this.min.ele);
+  $("#ele_max").html(this.max.ele);
+  $("#climb").html(this.climb.toFixed(2));
+  $("#descent").html(this.descent.toFixed(2));
 };
 
 Map.prototype.startSelection = function(event, point) {
@@ -142,8 +135,7 @@ Map.prototype.modifierClicked = function(event, pointIndex) {
 Map.prototype.modifierOver = function(event, pointIndex) {
   var point = this.points[pointIndex];
   if(point) {
-    this.showPointInfo(point);
-    // $(document).trigger("elevation:over", point);
+    this.updatePointInfo(point);
   }
 };
 
@@ -200,9 +192,7 @@ $(function() {
   $("#maps .map").width($(window).width() - 280);
   var map = new Map();
   map.init();
-  // map.elevator.init();
   map.omap.init();
-  
   setTimeout(function() {
     $("#cover").hide();
   }, 500);
