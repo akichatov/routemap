@@ -15,7 +15,7 @@ var Map = function() {
     pointIconUrl: '/assets/point-flag.png',
     startIconUrl: '/assets/start-flag.png',
     endIconUrl: '/assets/finish-flag.png',
-    modifierIconUrl: '/assets/point_a.png'
+    modifierIconUrl: '/assets/1x1.png'
   };
   $(document).bind('elevation:over', $.proxy(this.elevationOver, this));
   $(document).bind('selection:start', $.proxy(this.startSelection, this));
@@ -99,8 +99,6 @@ Map.prototype.updatePointInfo = function(point) {
 };
 
 Map.prototype.updateTrackInfo = function() {
-  $("#undoCount").html(this.removedPoints.length);
-  $("#undo").toggle(this.removedPoints.length > 0);
   $("#distance_km").html((this.tracks_distance / 1000).toFixed(2));
   $("#ele_min").html(this.min.ele);
   $("#ele_max").html(this.max.ele);
@@ -141,17 +139,20 @@ Map.prototype.modifierOver = function(event, pointIndex) {
 
 Map.prototype.pointRemoved = function(event, pointIndex) {
   this.removedPoints.push(pointIndex);
+  $("#undoCount").html(this.removedPoints.length);
+  $("#undo").toggle(this.removedPoints.length > 0);
   this.sliceTrack();
 };
 
 Map.prototype.pointRemovedCallback = function(data, status) {
   $("#sliceLoader").hide();
-  $("#undo").show();
   this.init();
 };
 
 Map.prototype.undoClicked = function(event) {
   $(document).trigger("point:returned", this.removedPoints.pop());
+  $("#undoCount").html(this.removedPoints.length);
+  $("#undo").toggle(this.removedPoints.length > 0);
   this.sliceTrack();
   return false;
 };
@@ -162,7 +163,6 @@ Map.prototype.sliceTrack = function() {
 };
 
 Map.prototype.doSliceTrack = function() {
-  $("#undo").hide();
   $("#sliceLoader").show();
   $.post(Map.slice_path, {
     'excludes[]': this.removedPoints

@@ -102,6 +102,13 @@
   }
 }
 
-.olAlphaImg {
+.modifierPointIcon {
+  width: 12px;
+  height: 12px;
   cursor: pointer;
+  background: transparent url('/assets/point_a.png') no-repeat;
+  &:hover {
+    background: transparent url('/assets/point_b.png') no-repeat;
+  }
 }
+

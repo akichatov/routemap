@@ -63,7 +63,7 @@ OMap.prototype.addYandex = function() {
     });
     this.omap.addLayer(yandexMap);
   }
-}
+};
 
 OMap.prototype.init = function() {
   if(!this.initialized) {
@@ -99,6 +99,7 @@ OMap.prototype.init = function() {
           if(Map.edit_mode) {
             geometry.line = line;
             modifierPointIcon = new OpenLayers.Icon(this.options.modifierIconUrl, this.modifierPointSize, this.modifierPointOffset);
+            modifierPointIcon.imageDiv.className = 'modifierPointIcon';
             modifierMarker = new OpenLayers.Marker(new OpenLayers.LonLat(geometry.x, geometry.y), modifierPointIcon);
             modifierMarker.events.register('click', point.fullIndex, this.modifierClicked);
             modifierMarker.events.register('mouseover', point.fullIndex, this.modifierOver);
@@ -148,7 +149,7 @@ OMap.prototype.zoomed = function() {
 OMap.prototype.modifierClicked = function(evt) {
   $(document).trigger("modifier:clicked", this);
   OpenLayers.Event.stop(evt);
-}
+};
 
 OMap.prototype.modifierOver = function(evt) {
   $(document).trigger("modifier:over", this);
