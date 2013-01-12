@@ -4,7 +4,7 @@ set :rails_env, :aak
 set :rvm_ruby_string, 'ruby-1.9.2-p290@routemap'
 set :rvm_type, :user
 set :rvm_install_type, :head
-set :bundle_without, [:development, :production, :test]
+set :bundle_without, [:development, :test]
 set :deploy_to, "/var/www/apps/routemap"
 set :scm_verbose, true
 set :user, 'aak'

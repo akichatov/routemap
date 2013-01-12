@@ -1,6 +1,7 @@
 Routemap::Application.configure do
   RM_DOMAIN = 'trackdojo.com'
   TRACK_ATTACHMENT_OPTS = {
+    hash_secret: ENV['TRACK_ATTACHMENT_SECRET'],
     url: '/system/tracks/attachments/:hash/:basename.:extension'
   }
 
