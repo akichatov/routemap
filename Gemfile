@@ -31,6 +31,7 @@ gem 'ruby-openid', git: 'git://github.com/openid/ruby-openid.git'
 gem 'omniauth-openid'
 gem 'libxml-ruby', :require => 'libxml'
 gem 'timezone'
+gem 'exifr'
 gem 'jquery-rails'
 
 group :development, :test do

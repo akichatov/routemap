@@ -11,7 +11,26 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121231020423) do
+ActiveRecord::Schema.define(:version => 20130112004807) do
+
+  create_table "photos", :force => true do |t|
+    t.integer  "user_id",                                               :null => false
+    t.integer  "tag_id"
+    t.string   "code",                                                  :null => false
+    t.string   "attachment_file_name",                                  :null => false
+    t.integer  "attachment_file_size",                                  :null => false
+    t.string   "attachment_content_type",                               :null => false
+    t.datetime "date"
+    t.decimal  "lat",                     :precision => 9, :scale => 6
+    t.decimal  "lon",                     :precision => 9, :scale => 6
+    t.decimal  "direction",               :precision => 6, :scale => 3
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
+  end
+
+  add_index "photos", ["code"], :name => "index_photos_on_code"
+  add_index "photos", ["tag_id"], :name => "index_photos_on_tag_id"
+  add_index "photos", ["user_id"], :name => "index_photos_on_user_id"
 
   create_table "tags", :force => true do |t|
     t.integer  "user_id"
@@ -20,6 +39,15 @@ ActiveRecord::Schema.define(:version => 20121231020423) do
     t.datetime "updated_at", :null => false
     t.string   "code"
   end
+
+  create_table "tags_tracks", :force => true do |t|
+    t.integer  "tag_id"
+    t.integer  "track_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "tags_tracks", ["tag_id", "track_id"], :name => "index_tags_tracks_on_tag_id_and_track_id", :unique => true
 
   create_table "tracks", :force => true do |t|
     t.string   "name",                    :null => false

@@ -89,6 +89,73 @@ a:link, a:visited {
   }
 }
 
+#photos {
+  margin-top: 1em;
+  clear: both;
+  overflow: hidden;
+  #tag_list {
+    float: left;
+    width: 160px;
+    margin-right: 20px;
+    .tag {
+      padding: 5px 10px;
+      &.active {
+        padding-left: 6px;
+        border-left: 4px solid #E5E5E5;
+        font-weight: bold;
+      }
+      small {
+        float: right;
+        margin-left: 20px;
+      }
+    }
+  }
+
+  #photo_list {
+    overflow: hidden;
+    .photo {
+      float: left;
+      overflow: hidden;
+      margin: 0 5px 5px 0;
+      width: 75px;
+      height: 75px;
+    }
+  }
+}
+
 .partition {
   margin: 0 0 0 2em;
+}
+
+#uploaded_errors {
+  div {
+    margin: 0.2em;
+    color: red;
+  }
+}
+#uploaded_count {
+  margin: 0.2em;
+}
+#uploaded_list {
+  overflow: hidden;
+  .thumb {
+    float: left;
+    width: 75px;
+    height: 75px;
+    margin: 0 5px 5px 0;
+    overflow: hidden;
+    &.load {
+      background: transparent url('/assets/ajax-loader.gif') no-repeat center center;
+    }
+    &.error {
+      width: 73px;
+      height: 73px;
+      font-size: 10px;
+      color: red;
+      vertical-align: middle;
+      line-height: 73px;
+      text-align: center;
+      border: 1px solid black;
+    }
+  }
 }

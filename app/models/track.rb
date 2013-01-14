@@ -1,8 +1,7 @@
 class Track < ActiveRecord::Base
-  include RandomCode
+  include RandomCode, Tagged
 
   belongs_to :user
-  belongs_to :tag
   has_one :version, dependent: :destroy
 
   has_attached_file :attachment, {
@@ -10,9 +9,8 @@ class Track < ActiveRecord::Base
     hash_secret: 'track_attachment_secret'
   }.merge(TRACK_ATTACHMENT_OPTS)
 
-  attr_accessible :name, :attachment, :tag_name
+  attr_accessible :name, :attachment
   attr_accessor :output
-  attr_writer :tag_name
 
   validates_presence_of :name
   validates :attachment, attachment_presence: true
@@ -20,14 +18,13 @@ class Track < ActiveRecord::Base
 
   scope :ordered, joins(:version).order("tracks.tag_id, versions.start_at")
   scope :start_at_ordered, joins(:version).order("versions.start_at")
+  scope :within, lambda { |photo|
+    joins(:version).where("'#{photo.date.utc.to_formatted_s(:db)}' BETWEEN versions.start_at AND versions.end_at")
+  }
 
-  before_save   :update_tag, :process_data
+  before_save :process_data
 
   delegate *Version::ATTRIBUTES, to: :version
-
-  def tag_name
-    @tag_name || self.tag.try(:name)
-  end
 
   def output
     @output ||= Gpx.parse(self)
@@ -50,10 +47,6 @@ private
       @output = nil
       errors.add :attachment, "can't be processed."
     end
-  end
-
-  def update_tag
-    self.tag = user.tags.find_or_create_by_name(@tag_name) if @tag_name.present?
   end
 
   def process_data

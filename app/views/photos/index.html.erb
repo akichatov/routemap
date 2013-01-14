@@ -1,0 +1,32 @@
+<div id="photos">
+  <%- if user_signed_in? -%>
+    <div id="tag_list">
+      <div class="tag <%= @tag.nil? && 'active' %>">
+        <small>
+          <%= @all_photos.size %>
+        </small>
+        <%= link_to t('views.tracks.index.labels.all'), photos_path %>
+      </div>
+      <%- @tags.each do |tag| -%>
+        <%- if tag.photos.any? -%>
+          <div class="tag <%= @tag == tag && 'active' %>">
+            <small>
+              <%= tag.photos.size %>
+            </small>
+            <%= link_to tag.name, tag_photos_path(tag) %>
+          </div>
+        <%- end -%>
+      <%- end -%>
+
+    </div>
+  <%- end -%>
+  <div id="photo_list">
+    <%- @photos.each do |photo| -%>
+      <div class="photo">
+        <%= link_to photo do %>
+          <%= image_tag photo.attachment.url(:thumb) %>
+        <%- end -%>
+      </div>
+    <%- end -%>  
+  </div>
+</div>

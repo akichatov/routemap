@@ -1,0 +1,1 @@
+Map.photos = <%= @photos.map{|p| {iconUrl: p.attachment.url(:icon), previewUrl: p.attachment.url(:small), photoUrl: photo_path(p), lat: p.lat.to_f, lon: p.lon.to_f, direction: p.direction.to_f} }.to_json.html_safe %>;

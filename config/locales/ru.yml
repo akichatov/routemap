@@ -85,3 +85,29 @@ ru:
           attributes:
             selected:
               too_short: Необходимо выбрать хотя бы одну часть
+
+  activerecord:
+    errors:
+      models:
+        photo:
+          attributes:
+            attachment_content_type:
+              invalid: недопустимый
+            attachment_file_size:
+              in_between: "должен быть больше %{min} и меньше %{max}"
+              less_than: "должен быть меньше %{count}"
+      messages:
+        record_invalid: Ошибка
+
+  number:
+    human:
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one:   "Byte"
+            other: "Bytes"
+          kb: "KB"
+          mb: "MB"
+          gb: "GB"
+          tb: "TB"

@@ -1,0 +1,6 @@
+<%- if @photo.errors.any? -%>
+  <%- response.status = 422 -%>
+  <%= @photo.errors.full_messages.join(', ') %>
+<%- else -%>
+  $("#uploaded_list .thumb.load").html('<img src="<%= @photo.attachment.url(:thumb) %>"/>');
+<%- end -%>

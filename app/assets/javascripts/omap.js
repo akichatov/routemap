@@ -46,6 +46,7 @@ var OMap = function(options, map) {
   this.omap.addControl(new OpenLayers.Control.FullScreen());
   $(document).bind('point:removed', $.proxy(this.pointRemoved, this));
   $(document).bind('point:returned', $.proxy(this.pointReturned, this));
+  this.omap.events.register('click', this, this.mapClicked);
 };
 
 OMap.prototype.addYandex = function() {
@@ -98,9 +99,9 @@ OMap.prototype.init = function() {
           line.lineString.addPoint(geometry);
           if(Map.edit_mode) {
             geometry.line = line;
-            modifierPointIcon = new OpenLayers.Icon(this.options.modifierIconUrl, this.modifierPointSize, this.modifierPointOffset);
+            var modifierPointIcon = new OpenLayers.Icon(this.options.modifierIconUrl, this.modifierPointSize, this.modifierPointOffset);
             modifierPointIcon.imageDiv.className = 'modifierPointIcon';
-            modifierMarker = new OpenLayers.Marker(new OpenLayers.LonLat(geometry.x, geometry.y), modifierPointIcon);
+            var modifierMarker = new OpenLayers.Marker(new OpenLayers.LonLat(geometry.x, geometry.y), modifierPointIcon);
             modifierMarker.events.register('click', point.fullIndex, this.modifierClicked);
             modifierMarker.events.register('mouseover', point.fullIndex, this.modifierOver);
             this.modifierMarkers.addMarker(modifierMarker);
@@ -110,9 +111,45 @@ OMap.prototype.init = function() {
       }
       this.omap.addLayer(line.vectorLayer);
     }
+    this.placePhotos();
     this.zoomed();
     this.initialized = true;
   }
+};
+
+OMap.prototype.placePhotos = function() {
+  if(Map.photos) {
+    this.photoMarkers = new OpenLayers.Layer.Markers("Photos");
+    this.photoSize = new OpenLayers.Size(24, 24);
+    this.photoOffset = new OpenLayers.Pixel(-12, -24);
+    for(var i = 0; i < Map.photos.length; i++) {
+      var photo = Map.photos[i];
+      var photoIcon = new OpenLayers.Icon(photo.iconUrl, this.photoSize, this.photoOffset);
+      photoIcon.imageDiv.className = "photoIcon";
+      var photoLonLat = new OpenLayers.LonLat(photo.lon, photo.lat).transform(this.fromProjection, this.omap.getProjectionObject());
+      var photoMarker = new OpenLayers.Marker(photoLonLat, photoIcon);
+      photoMarker.events.register('click', photo, this.photoClicked);
+      this.photoMarkers.addMarker(photoMarker);
+      if(photo.direction) {
+        var pointer = document.createElement("div");
+        pointer.innerHTML = "<span></span>"
+        pointer.className = "pointer";
+        rotate(pointer, photo.direction - 45);
+        photoIcon.imageDiv.appendChild(pointer);
+      }
+    }
+    this.omap.addLayer(this.photoMarkers);
+  }
+};
+
+OMap.prototype.photoClicked = function(evt) {
+  $("#previewImg").attr('src', this.previewUrl);
+  $("#previewLink").attr('href', this.photoUrl).blur();
+  $("#previewPhoto").show();
+};
+
+OMap.prototype.mapClicked = function(evt) {
+  $("#previewPhoto").hide();
 };
 
 OMap.prototype.getTolerance = function() {
@@ -120,7 +157,7 @@ OMap.prototype.getTolerance = function() {
   if(tolerance < 0 || tolerance <= 5 && this.omap.getNumZoomLevels() > 19) {
     tolerance = 0;
   } else {
-    tolerance = Math.pow(tolerance, 2)
+    tolerance = Math.pow(tolerance, 2) / 2
   }
   return tolerance;
 };
@@ -235,6 +272,17 @@ OMap.prototype.getBounds = function() {
   return bounds;
 };
 
+function rotate(object, degrees) {
+  $(object).css({
+  '-webkit-transform' : 'rotate('+degrees+'deg)',
+     '-moz-transform' : 'rotate('+degrees+'deg)',  
+      '-ms-transform' : 'rotate('+degrees+'deg)',  
+       '-o-transform' : 'rotate('+degrees+'deg)',  
+          'transform' : 'rotate('+degrees+'deg)',  
+               'zoom' : 1
+
+    });
+}
 // Override modifyAlphaImageDiv function so it doen't reload existent image
 OpenLayers.Util.modifyAlphaImageDiv = function(div, id, px, sz, imgURL, 
                                                position, border, sizing, 

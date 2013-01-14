@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
 
   has_many :tracks, include: [:version, :tag]
   has_many :tags
+  has_many :photos
 
   def self.find_for_open_id(access_token, signed_in_resource=nil)
     data = access_token.info

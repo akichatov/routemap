@@ -4,6 +4,7 @@ class Version < ActiveRecord::Base
   ATTRIBUTES = [:start_at, :end_at, :timezone, :distance, :climb, :descent,
                 :total_time, :motion_time, :avg_motion_speed, :max_speed]
 
+
   def init_by(output)
     @output_json = output.to_json
     set_data_json(@output_json)

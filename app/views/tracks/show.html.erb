@@ -3,6 +3,7 @@
 <%= javascript "http://api-maps.yandex.ru/2.0-stable/?load=package.full&coordorder=longlat&lang=ru-RU" %>
 <%= javascript 'map.js' %>
 <%= javascript track_path(@track, format: :js) if @track %>
+<%= javascript track_photos_path(@track, format: :js) if @track %>
 <%= javascript tag_path(@tag, format: :js) if @tag %>
 <div id='cover'></div>
 <div id="info">
@@ -120,6 +121,11 @@
     <canvas id="canvasTemplateElement"></canvas>
     <canvas id="canvasElement"></canvas>
   </div>
+</div>
+<div id="previewPhoto" style="display: none;">
+  <a href="#" id="previewLink">
+    <img id="previewImg" src="/assets/1x1.png" />
+  </a>
 </div>
 <%- if @track -%>
 <script type="text/javascript">

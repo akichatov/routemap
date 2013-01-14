@@ -5,6 +5,11 @@ Routemap::Application.configure do
     url: '/system/tracks/attachments/:hash/:basename.:extension'
   }
 
+  PHOTO_ATTACHMENT_OPTS = {
+    hash_secret: ENV['PHOTO_ATTACHMENT_SECRET'],
+    url: '/system/photos/attachments/:hash/:style/:basename.:extension'
+  }
+
   config.action_mailer.default_url_options = { :host => RM_DOMAIN }
   # Settings specified here will take precedence over those in config/application.rb
 
