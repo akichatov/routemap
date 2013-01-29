@@ -5,9 +5,8 @@ class PartitionsController < ApplicationController
 
   def create
     redirect_to @track and return unless @partition.split?
-    tag = @track.tag
     if @partition.save
-      redirect_to tag ? tag_tracks_path(tag) : tracks_path
+      redirect_to tracks_path
     else
       render :new
     end
@@ -21,7 +20,6 @@ private
 
   def setup_partition
     @partition = Partition.new((params[:partition] || {split: 'true'}).merge(track: @track))
-    @partition.selected = (0..@partition.parts.length - 1).map{|i| i.to_s} unless params[:partition]
   end
 
 end

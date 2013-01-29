@@ -14,7 +14,6 @@ class Partition
       send("#{name}=", value)
     end
     setup_parts
-    self.selected ||= []
   end
 
   def persisted?
@@ -42,6 +41,7 @@ class Partition
     groups.keys.each do |key|
       self.parts[key] = Output.new(groups[key], track)
     end
+    self.selected ||= (0..parts.length - 1).map{|i| i.to_s}
   end
 
   def create_part(index)
@@ -49,7 +49,7 @@ class Partition
     output = parts[day]
     part = track.user.tracks.build({
       name: "#{track.name} #{day}",
-      tag: track.tag,
+      tags: track.tags,
       output: output,
       attachment: Paperclip.io_adapters.for(track.attachment)
     }, without_protection: true)

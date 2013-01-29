@@ -9,9 +9,13 @@
 <div id="info">
   <h3><%= (@track || @tag).name %></h3>
   <table id="track_statistic">
-    <%- if @track && @track.tag -%>
+    <%- if @track && @track.tags.any? -%>
       <tr>
-        <td colspan="2"><%= link_to @track.tag.name, tag_path(@track.tag) %></td>
+        <td colspan="2">
+          <%- @track.tags.each do |tag| -%>
+            <%= link_to tag.name, tag_path(tag) %>
+          <%- end -%>
+        </td>
       </tr>
     <%- end -%>
     <%- if @track -%>

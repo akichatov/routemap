@@ -27,10 +27,10 @@ en:
 
       index:
         labels:
-          groups: 'Groups'
+          groups: 'Tags'
           tracks: 'Tracks'
           all: 'All'
-          view_group: View group tracks
+          view_group: View tag tracks
           up: 'Move up'
           down: 'Move down'
           delete: 'Delete'
@@ -40,7 +40,7 @@ en:
       show:
         labels:
           name: 'Name'
-          group: 'Group'
+          group: 'Tag'
           date: 'Date'
           time: 'Time'
           actions: 'Actions'
@@ -65,7 +65,7 @@ en:
         title: Edit track
       form:
         name: Name
-        group: Group
+        group: Tags comma-separated
         save: Save
     partitions:
       it_looks_like: It looks like your track covers more than one day
