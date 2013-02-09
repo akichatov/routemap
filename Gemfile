@@ -17,12 +17,16 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+group :development do
+  gem 'thin'
+end
+
 group :development, :aak do
   gem 'mysql2'
   gem 'unicorn'
   gem 'capistrano'
   gem 'rvm-capistrano'
-  gem 'capistrano-unicorn'
+  gem 'capistrano-unicorn', git: 'git://github.com/sosedoff/capistrano-unicorn.git'
 end
 
 gem 'paperclip'

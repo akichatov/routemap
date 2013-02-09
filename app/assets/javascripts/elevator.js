@@ -29,14 +29,10 @@ function Elevator(map) {
 Elevator.prototype.init = function() {
   this.screenPoints = [];
   this.calcMinMax();
-  var zeroCount = Math.floor((this.maxY - this.minY) / 10).toString().length
-  var factor = "1";
-  for(var i = 0; i < zeroCount; i++) {
-    factor = factor.concat("0");
-  }
-  factor = parseInt(factor);
-  this.startY = Math.floor(this.minY / factor) * factor;
-  this.endY = Math.ceil(this.maxY / factor) * factor;
+  var upFactor = Math.abs(Math.floor(this.maxY)).toString().length > 2 ? 100 : 10
+  var downFactor = Math.abs(Math.floor(this.minY)).toString().length > 2 ? 100 : 10
+  this.startY = Math.floor(this.minY / downFactor) * downFactor;
+  this.endY = Math.ceil(this.maxY / upFactor) * upFactor;
   this.drawAxis();
   this.processScreenPoints();
   this.drawGraphTemplate();
