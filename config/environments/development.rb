@@ -1,6 +1,6 @@
 Routemap::Application.configure do
   RM_DOMAIN = 'lvh.me'
-  TRACK_ATTACHMENT_OPTS = { url: '/system/tracks/attachments/:hash/:basename.:extension' }
+  TRACK_ATTACHMENT_OPTS = {}
   PHOTO_ATTACHMENT_OPTS = { url: '/system/photos/attachments/:hash/:style/:basename.:extension' }
 
   config.action_mailer.default_url_options = { :host => "#{RM_DOMAIN}:3000" }

@@ -7,8 +7,7 @@ class Track < ActiveRecord::Base
   has_many :tags, through: :tags_tracks
 
   has_attached_file :attachment, {
-    hash_data: ':class/:attachment/:id/:code',
-    hash_secret: 'track_attachment_secret'
+    url: '/system/tracks/attachments/:id/:basename.:extension'
   }.merge(TRACK_ATTACHMENT_OPTS)
 
   attr_accessible :name, :attachment
