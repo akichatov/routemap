@@ -19,7 +19,7 @@ class Track < ActiveRecord::Base
   validates :attachment, attachment_presence: true
   validate :has_points
 
-  scope :ordered, joins(:version).order("versions.start_at")
+  scope :ordered, joins(:version).order("versions.start_at DESC")
   scope :start_at_ordered, joins(:version).order("versions.start_at")
   scope :within, lambda { |photo|
     joins(:version).where("'#{photo.date.utc.to_formatted_s(:db)}' BETWEEN versions.start_at AND versions.end_at")

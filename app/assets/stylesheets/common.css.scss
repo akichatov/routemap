@@ -86,6 +86,14 @@ a:link, a:visited {
         visibility: visible;
       }
     }
+    #paginator {
+      border: none;
+      padding: 20px 0;
+      form, nav {
+        display: inline;
+        margin-right: 20px;
+      }
+    }
   }
 }
 

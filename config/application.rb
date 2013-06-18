@@ -65,4 +65,9 @@ Timezone::Configure.begin do |c|
   c.username = 'trackdojo'
 end
 
+Kaminari.configure do |c|
+  c.default_per_page = 20
+  c.max_per_page = 500
+end
+
 Mime::Type.register "application/gpx", :gpx

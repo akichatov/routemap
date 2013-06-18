@@ -9,11 +9,11 @@ Routemap::Application.routes.draw do
   root to: "home#index"
   resources :tracks do
     resources :partitions, only: [:new, :create]
-    resources :photos, only: [:index]
+    resources :photos, only: :index
   end
-  resources :tags, only: [:show] do
+  resources :tags, only: :show do
     resources :tracks
-    resources :photos, only: [:index]
+    resources :photos, only: :index
   end
   resources :photos
   post 'tracks/multi_view', to: 'tracks#multi_view'

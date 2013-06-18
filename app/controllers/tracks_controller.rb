@@ -4,6 +4,7 @@ class TracksController < ApplicationController
   before_filter :authenticate_user!, except: [:show]
   before_filter :find_tag
   before_filter :find_tags, only: [:index, :create]
+  before_filter :find_per_page, only: [:index, :create]
   before_filter :find_tracks, only: [:index, :create]
   before_filter :find_track, only: [:edit, :update, :destroy, :slice, :save_slice]
   before_filter :setup_new_track, only: [:index, :new]
@@ -69,13 +70,19 @@ private
     @tags = current_user.tags
   end
 
+  def find_per_page
+    @page = (params[:page] || 1).to_i
+    @per_page = (params[:per_page] || cookies[:tracks_per_page] || 20).to_i
+    cookies[:tracks_per_page] = @per_page
+  end
+
   def find_tracks
-    @all_tracks = current_user.tracks.ordered
+    @all_tracks = @tracks = current_user.tracks.ordered
     if @tag
       @tracks = @tag.tracks.ordered
-    else
-      @tracks = @all_tracks
     end
+    @tracks_size = @tracks.size
+    @tracks = @tracks.page(@page).per(@per_page)
   end
 
   def find_track

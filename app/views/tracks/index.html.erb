@@ -1,3 +1,4 @@
+<%= javascript 'tracks' %>
 <div id='tracks'>
   <div id='tag_list'>
     <h2><%= t('views.tracks.index.labels.groups') %></h2>
@@ -20,7 +21,6 @@
   </div>
   <div id='track_list'>
     <h2><%= t('views.tracks.index.labels.tracks') %></h2>
-    <%= form_tag tracks_multi_view_path do %>
     <table>
       <thead>
         <tr>
@@ -42,8 +42,8 @@
       <tbody>
       <%- @tracks.each_with_index do |track, index| -%>
         <tr>
-          <td><%= check_box_tag 'tracks[]', track.code, false  %></td>
-          <td><%= index + 1 %>.</td>
+          <td><%= check_box_tag 'tracks[]', track.code, false, class: 'track_code_input', id: "track_#{track.code}" %></td>
+          <td><%= @tracks_size - index - (@per_page * (@page - 1)) %>.</td>
           <td><%= link_to track.name, track %></td>
           <%- unless @tag -%>
             <td><%= track.tag_name %></td>
@@ -60,9 +60,19 @@
           </td>
         </tr>
       <%- end -%>
-      <tr><td colspan='8'><%= submit_tag 'View' %></td></tr>
+      <tr>
+        <td colspan='11' id='paginator'>
+          <%= form_tag tracks_multi_view_path, id: 'tracks_multi_view' do %>
+            <%= submit_tag 'View', id: 'tracks_multi_view_submit' %>
+          <%- end -%>
+          <%= form_tag @tag ? tag_tracks_path(@tag) : tracks_path, method: 'get', id: 'tracks_per_page' do %>
+            <%= select_tag :per_page, options_for_select([10, 20, 30, 50, 100, @per_page].uniq, @per_page) %>
+            per page
+          <%- end -%>
+          <%= paginate @tracks, window: 20 %>
+        </td>
+      </tr>
       </tbody>
     </table>
-    <%- end -%>
   </div>
 </div>

@@ -37,6 +37,7 @@ gem 'libxml-ruby', :require => 'libxml'
 gem 'timezone'
 gem 'exifr'
 gem 'jquery-rails'
+gem 'kaminari'
 
 group :development, :test do
   gem 'rspec-rails'
