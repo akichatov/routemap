@@ -1,14 +1,11 @@
 namespace :routemap do
   namespace :tracks do
-    desc "Update track positions"
+    desc "Update track clib/descent"
     task update_versions: :environment do
       User.all.each do |user|
         puts "Processing user: #{user.id} ..."
         user.tracks.each do |track|
-          data = track.version.to_hash
-          data[:start_at] = data.delete(:start_date)
-          data[:end_at] = data.delete(:end_date)
-          track.version.set_data_json(data.to_json)
+          track.version.init_by Output.new(track.points, track)
           track.version.save
         end
       end
