@@ -114,16 +114,22 @@
   </table>
 </div>
 <div id="elevation">
-  <div id="elevationControls">
-    <button id="elevationZoomIn" title="Zoom in">+</button>
-    <button id="elevationZoomOut" title="Zoom out">-</button>
-    <label>E<input type="radio" name="elevatorType" value="ele" id="showEle" checked="checked"/></label>
-    <label>S<input type="radio" name="elevatorType" value="speed" id="showSpeed"/></label>
-    <input type="checkbox" id="followMap" title="Follow map"/>
-  </div>
   <div id="elevationGraph">
     <canvas id="canvasTemplateElement"></canvas>
     <canvas id="canvasElement"></canvas>
+  </div>
+  <div id="elevationControls">
+    <button id="elevationZoomIn" title="Zoom in">+</button>
+    <button id="elevationZoomOut" title="Zoom out">-</button>
+    <label>Follow Map<input type="checkbox" id="followMap"/></label>
+    <label>Elevation/Distance<input type="radio" name="elevatorType" value="ele_dist" id="showEleDist" checked="checked"/></label>
+    <%- unless @tag -%>
+      <label>Elevation/Time<input type="radio" name="elevatorType" value="ele_time" id="showEleTime"/></label>
+    <%- end -%>
+    <label>Speed/Distance<input type="radio" name="elevatorType" value="speed_dist" id="showSpeedDist"/></label>
+    <%- unless @tag -%>
+      <label>Speed/Time<input type="radio" name="elevatorType" value="speed_time" id="showSpeedTime"/></label>
+    <%- end -%>
   </div>
 </div>
 <div id="previewPhoto" style="display: none;">

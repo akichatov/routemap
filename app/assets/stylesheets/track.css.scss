@@ -94,10 +94,12 @@
     }
   }
   #elevationControls {
-    width: 30px;
-    float: left;
     button {
       width: 30px;
+    }
+    label {
+      margin-left: 10px;
+      cursor: pointer;
     }
   }
 }

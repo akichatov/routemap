@@ -1,5 +1,6 @@
 function Elevator(map) {
   this.map = map;
+  this.xattr = 'fdist';
   this.yattr = 'ele';
   this.height = 200;
   this.zoomFactorIndex = 0;
@@ -22,8 +23,10 @@ function Elevator(map) {
   $("body").mouseup($.proxy(this.bodyMouseUp, this));
   $("#elevationZoomIn").click($.proxy(this.zoom, this, 1));
   $("#elevationZoomOut").click($.proxy(this.zoom, this, -1));
-  $("#showSpeed").click($.proxy(this.showSpeed, this));
-  $("#showEle").click($.proxy(this.showEle, this));
+  $("#showEleDist").click($.proxy(this.axisChanged, this, 'ele', 'fdist'));
+  $("#showSpeedDist").click($.proxy(this.axisChanged, this, 'speed', 'fdist'));
+  $("#showEleTime").click($.proxy(this.axisChanged, this, 'ele', 'time'));
+  $("#showSpeedTime").click($.proxy(this.axisChanged, this, 'speed', 'time'));
 }
 
 Elevator.prototype.init = function() {
@@ -39,22 +42,18 @@ Elevator.prototype.init = function() {
   this.draw();
 };
 
-Elevator.prototype.showSpeed = function() {
-  this.yattr = 'speed';
+Elevator.prototype.axisChanged = function(yattr, xattr) {
+  this.yattr = yattr;
+  this.xattr = xattr;
   this.init();
-}
-
-Elevator.prototype.showEle = function() {
-  this.yattr = 'ele';
-  this.init();
-}
+};
 
 Elevator.prototype.calcMinMax = function() {
   this.minX = this.maxX = this.minY = this.maxY = null;
   for(var i = 0; i < this.map.points.length; i++) {
     var point = this.map.points[i];
     if(point) {
-      var valueX = point.fdist;
+      var valueX = point[this.xattr];
       var valueY = point[this.yattr];
       this.minX = this.minX && this.minX < valueX ? this.minX : valueX;
       this.maxX = this.maxX && this.maxX > valueX ? this.maxX : valueX;
@@ -65,7 +64,7 @@ Elevator.prototype.calcMinMax = function() {
 };
 
 Elevator.prototype.setupWidth = function() {
-  this.initialWidth = $("#elevation").innerWidth() - 50;
+  this.initialWidth = $("#elevation").innerWidth();
   $("#elevationGraph").attr('width', this.initialWidth);
   this.initialVisibleWidth = this.initialWidth - this.padding.left - this.padding.right;
   this.visibleWidth = Math.floor(this.initialVisibleWidth * this.zoomFactor);
@@ -84,7 +83,7 @@ Elevator.prototype.zoom = function(step) {
 
 Elevator.prototype.processScreenPoints = function() {
   var diffY = this.endY - this.startY;
-  this.factorX = this.maxX / this.visibleWidth;
+  this.factorX = (this.maxX - this.minX) / this.visibleWidth;
   this.factorY = this.visibleHeight / (diffY == 0 ? 1 : diffY);
   for(var i = 0; i < this.map.points.length; i++) {
     var point = this.map.points[i];
@@ -97,10 +96,35 @@ Elevator.prototype.processScreenPoints = function() {
       }
     }
   }
-}
+  for(var i = this.padding.left; i < this.screenPoints.length; i++) {
+    var screenPoint = this.screenPoints[i];
+    if(!screenPoint) {
+      var previous = null;
+      var next = null;
+      for(var p = i - 1; p >= 0; p--) {
+        previous = this.screenPoints[p];
+        if(previous) {
+          break;
+        }
+      }
+      for(var n = i + 1; n < this.screenPoints.length; n++) {
+        next = this.screenPoints[n];
+        if(next) {
+          break;
+        }
+      }
+      var target = previous || next;
+      if(previous && next) {
+        target = previous.y > next.y ? previous : next;
+      }
+      this.screenPoints[i] = {x: i, y: target.y, point: target.point};
+    }
+  }
+  
+};
 
 Elevator.prototype.calculateScreenPoint = function(point) {
-  var x = Math.ceil(point.fdist / this.factorX + this.padding.left);
+  var x = Math.ceil((point[this.xattr] - this.minX) / this.factorX + this.padding.left);
   var y = this.height - Math.round((point[this.yattr] - this.startY) * this.factorY) - this.padding.bottom;
   return {x: x, y: y};
 }

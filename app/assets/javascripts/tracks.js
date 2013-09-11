@@ -9,7 +9,7 @@ $(function() {
   
   $("#tracks_multi_view").submit(function() {
     $(".track_code_input:checked").each(function() {
-      $("#tracks_multi_view").append("<input name='tracks[]' value='" + this.value + "'/>")
+      $("#tracks_multi_view").append("<input type='hidden' name='tracks[]' value='" + this.value + "'/>")
     });
   });
 

@@ -76,7 +76,7 @@ Map.prototype.initTrack = function(track, trackIndex) {
     if(point) {
       point.track = track;
       point.fdist += dist;
-      point.time = new timezoneJS.Date(point.time * 1000, track.timezone).toString();
+      point.date_time = new timezoneJS.Date(point.time * 1000, track.timezone).toString();
       point.fullIndex = fullIndex + i;
     }
     this.points.push(point);
@@ -91,7 +91,7 @@ Map.prototype.elevationOver = function(event, point) {
 };
 
 Map.prototype.updatePointInfo = function(point) {
-  $("#time").html(point.time);
+  $("#time").html(point.date_time);
   $("#pointEle").html(point.ele.toFixed(2));
   $("#pointMeters").html(point.fdist.toFixed(2));
   $("#pointKms").html((point.fdist / 1000).toFixed(2));
@@ -102,8 +102,8 @@ Map.prototype.updateTrackInfo = function() {
   $("#distance_km").html((this.tracks_distance / 1000).toFixed(2));
   $("#ele_min").html(this.min.ele);
   $("#ele_max").html(this.max.ele);
-  $("#climb").html(this.climb.toFixed(2));
-  $("#descent").html(this.descent.toFixed(2));
+  $("#climb").html(this.climb);
+  $("#descent").html(this.descent);
 };
 
 Map.prototype.startSelection = function(event, point) {
@@ -188,7 +188,7 @@ timezoneJS.timezone.zoneFileBasePath = '/tz';
 timezoneJS.timezone.defaultZoneFile = ['europe', 'northamerica'];
 timezoneJS.timezone.init({ async: false });
 $(function() {
-  $("#maps .map").height($(window).height() - 280);
+  $("#maps .map").height($(window).height() - 300);
   $("#maps .map").width($(window).width() - 280);
   var map = new Map();
   map.init();
