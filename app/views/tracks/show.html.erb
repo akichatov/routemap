@@ -114,14 +114,9 @@
   </table>
 </div>
 <div id="elevation">
-  <div id="elevationGraph">
-    <canvas id="canvasTemplateElement"></canvas>
-    <canvas id="canvasElement"></canvas>
-  </div>
   <div id="elevationControls">
     <button id="elevationZoomIn" title="Zoom in">+</button>
     <button id="elevationZoomOut" title="Zoom out">-</button>
-    <label>Follow Map<input type="checkbox" id="followMap"/></label>
     <label>Elevation/Distance<input type="radio" name="elevatorType" value="ele_dist" id="showEleDist" checked="checked"/></label>
     <%- unless @tag -%>
       <label>Elevation/Time<input type="radio" name="elevatorType" value="ele_time" id="showEleTime"/></label>
@@ -130,10 +125,22 @@
     <%- unless @tag -%>
       <label>Speed/Time<input type="radio" name="elevatorType" value="speed_time" id="showSpeedTime"/></label>
     <%- end -%>
+    <label>Follow Map<input type="checkbox" id="followMap"/></label>
+    <button id="startPlay" title="Play"><%= "\u25B6" %></button>
+    <button id="stopPlay" title="Stop" disabled='disabled'><%= "\u25FE" %></button>
+    <div style='display:none;'>
+      <button id="speedDownPlay" title=""><%= "<<" %></button>
+      <span id='playSpeed'>0</span>
+      <button id="speedUpPlay" title=""><%= ">>" %></button>
+    </div>
+  </div>
+  <div id="elevationGraph">
+    <canvas id="canvasTemplateElement"></canvas>
+    <canvas id="canvasElement"></canvas>
   </div>
 </div>
 <div id="previewPhoto" style="display: none;">
-  <a href="#" id="previewLink">
+  <a href="#" id="previewLink" target='_blank'>
     <img id="previewImg" src="/assets/1x1.png" />
   </a>
 </div>

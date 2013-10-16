@@ -188,7 +188,7 @@ timezoneJS.timezone.zoneFileBasePath = '/tz';
 timezoneJS.timezone.defaultZoneFile = ['europe', 'northamerica'];
 timezoneJS.timezone.init({ async: false });
 $(function() {
-  $("#maps .map").height($(window).height() - 300);
+  $("#maps .map").height($(window).height() - 310);
   $("#maps .map").width($(window).width() - 280);
   var map = new Map();
   map.init();

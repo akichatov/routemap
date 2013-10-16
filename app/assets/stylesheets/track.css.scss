@@ -151,3 +151,11 @@
     padding: 10px;
   }
 }
+
+#speedDownPlay div {
+  transform:rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  writing-mode: tb-rl;
+}

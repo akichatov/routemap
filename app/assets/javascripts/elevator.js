@@ -7,6 +7,14 @@ function Elevator(map) {
   this.zoomFactor = 1;
   this.zoomLimit = 5;
   this.padding = {top: 20, right: 30, bottom: 0, left: 40};
+  this.playing = false;
+  this.playSpeedTimeout = 100;
+  this.playStep = 1;
+  this.playSpeed = 0;
+  this.playX = this.padding.left;
+  this.playBound = $.proxy(this.play, this);
+  this.stopPlayBound = $.proxy(this.stopPlay, this);
+  this.doPlayBound = $.proxy(this.doPlay, this);
   $("#canvasElement, #canvasTemplateElement").attr('height', this.height);
   this.canvas = $("#canvasElement").get(0);
   this.canvasTemplate = $("#canvasTemplateElement").get(0);
@@ -27,15 +35,25 @@ function Elevator(map) {
   $("#showSpeedDist").click($.proxy(this.axisChanged, this, 'speed', 'fdist'));
   $("#showEleTime").click($.proxy(this.axisChanged, this, 'ele', 'time'));
   $("#showSpeedTime").click($.proxy(this.axisChanged, this, 'speed', 'time'));
+  $("#startPlay").click(this.playBound);
+  $("#stopPlay").click(this.stopPlayBound);
+  $("#speedDownPlay").click($.proxy(this.speedChangePlay, this, 1));
+  $("#speedUpPlay").click($.proxy(this.speedChangePlay, this, -1));
 }
 
 Elevator.prototype.init = function() {
   this.screenPoints = [];
   this.calcMinMax();
-  var upFactor = Math.abs(Math.floor(this.maxY)).toString().length > 2 ? 100 : 10
-  var downFactor = Math.abs(Math.floor(this.minY)).toString().length > 2 ? 100 : 10
-  this.startY = Math.floor(this.minY / downFactor) * downFactor;
-  this.endY = Math.ceil(this.maxY / upFactor) * upFactor;
+  var factor = 10;
+  var diff = this.maxY - this.minY;
+  if(diff < 100) {
+    factor = 5;
+  }
+  if(diff < 20) {
+    factor = 1;
+  }
+  this.startY = Math.floor(this.minY / factor) * factor;
+  this.endY = Math.ceil(this.maxY / factor) * factor;
   this.drawAxis();
   this.processScreenPoints();
   this.drawGraphTemplate();
@@ -143,12 +161,17 @@ Elevator.prototype.click = function(event) {
     $("#elevationGraph").removeClass("dragging");
   } else {
     var x = this.getEventX(event);
-    if(!this.selectionStart) {
-      this.startSelection(x);
-    } else if (!this.selectionEnd) {
-      this.endSelection(x);
+    if(this.playing) {
+      this.playX = x;
+      this.draw();
     } else {
-      this.clearSelection(x);
+      if(!this.selectionStart) {
+        this.startSelection(x);
+      } else if (!this.selectionEnd) {
+        this.endSelection(x);
+      } else {
+        this.clearSelection(x);
+      }
     }
   }
 };
@@ -179,12 +202,85 @@ Elevator.prototype.mouseMove = function(event) {
     $("#elevationGraph").addClass("dragging");
     $("#elevationGraph").get(0).scrollLeft += (this.dragX - this.moveX);
   } else {
-    this.draw();
+    if(!this.playing) {
+      this.draw();
+    }
   }
 };
 
+Elevator.prototype.play = function() {
+  this.playing = true;
+  if(this.playTimeoutId) {
+    this.pausePlay();
+  } else {
+    if(this.hasPlaySpace()) {
+      this.continuePlay();
+    } else {
+      this.startPlay();
+    }
+  }
+};
+
+Elevator.prototype.startPlay = function() {
+  this.playX = this.padding.left;
+  this.continuePlay();
+};
+
+Elevator.prototype.pausePlay = function() {
+  $("#startPlay").html("\u25B6");
+  clearTimeout(this.playTimeoutId);
+  this.playTimeoutId = null;
+};
+
+Elevator.prototype.continuePlay = function() {
+  $("#stopPlay").get(0).disabled = false;
+  $("#startPlay").html("\u275A\u275A");
+  this.doPlay();
+};
+
+Elevator.prototype.endPlay = function() {
+  this.pausePlay();
+};
+
+Elevator.prototype.stopPlay = function() {
+  $("#stopPlay").get(0).disabled = true;
+  this.playing = false;
+  this.endPlay();
+  this.moveX = this.playX = this.padding.left;
+  this.draw();
+};
+
+Elevator.prototype.hasPlaySpace = function() {
+  return this.playX < (this.visibleWidth + this.padding.left);
+};
+
+Elevator.prototype.doPlay = function() {
+  if(this.hasPlaySpace()) {
+    this.moveX = this.playX;
+    this.draw();
+    this.playX+=this.playStep;
+    this.playTimeoutId = setTimeout(this.doPlayBound, this.playSpeedTimeout);
+  } else {
+    this.endPlay();
+  }
+};
+
+Elevator.prototype.speedChangePlay = function(factor) {
+  if(this.playSpeedTimeout > 100 || factor < 0) {
+    this.playSpeedTimeout += factor * 100;
+    this.playSpeed += factor;
+  } else {
+    if(factor < 0) {}
+    if(this.playStep > 1) {
+      this.playSpeed += factor;
+      this.playStep += factor;
+    }
+  }
+  $("#playSpeed").html(this.playSpeed);
+};
+
 Elevator.prototype.mouseOut = function(event) {
-  if(!this.dragging) {
+  if(!this.dragging && !this.playing) {
     this.draw();
     $(document).trigger("elevation:over");
   }
@@ -287,12 +383,21 @@ Elevator.prototype.drawGrid = function() {
   this.context.restore();
   this.context.strokeStyle = "rgba(228,237,247,1)";
   this.context.beginPath();
-  var step = Math.floor(this.visibleHeight / 5);
+  var count = 5;
+  var diff = this.endY - this.startY;
+  var dividers = [7, 6, 5, 4, 3, 2];
+  for(var i = 0; i < dividers.length; i++) {
+    if(diff % dividers[i] == 0) {
+      count = dividers[i];
+      break;
+    }
+  }
+  var step = Math.floor(this.visibleHeight / count);
   for(var i = 0; i <= this.visibleHeight / step; i++) {
     var y = this.height - i * step - this.padding.bottom;
     this.context.moveTo(1.5, y + 0.5);
     this.context.lineTo(this.width + 0.5, y + 0.5);
-    this.context.fillText(this.startY + Math.floor(i * step / this.factorY), 3, y - 3);
+    this.context.fillText(this.startY + Math.round(i * step / this.factorY), 3, y - 3);
   }
   this.context.stroke();
   this.context.strokeStyle = "#000000";
