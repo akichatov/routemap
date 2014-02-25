@@ -10,7 +10,7 @@ set :keep_releases, 5
 set :application, "RouteMap"
 set :deploy_to, "/var/www/apps/routemap"
 set :scm, :git
-set :repository, "git://github.com/akichatov/routemap.git"
+set :repository, "git@bitbucket.org:akichatov/trackdojo.git"
 set :use_sudo, false
 set :deploy_via, :remote_cache
 

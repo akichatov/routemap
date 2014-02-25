@@ -5,12 +5,15 @@ var OMap = function(options, map) {
   this.lines = [];
   this.fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
   this.toProjection   = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
+  this.toggleModifiersBound = $.proxy(this.toggleModifiers, this);
   this.omap = new OpenLayers.Map("omap", {
     numZoomLevels: 23,
     projection: this.toProjection,
     displayProjection: this.fromProjection,
     eventListeners: {
-      "zoomend": $.proxy(this.zoomed, this)
+      "zoomend": $.proxy(this.zoomend, this),
+      "addlayer": this.toggleModifiersBound,
+      "changelayer": this.toggleModifiersBound
     }
   });
   var osm = new OpenLayers.Layer.OSM();
@@ -112,13 +115,13 @@ OMap.prototype.init = function() {
       this.omap.addLayer(line.vectorLayer);
     }
     this.placePhotos();
-    this.zoomed();
+    this.simplifyByZoom();
     this.initialized = true;
   }
 };
 
 OMap.prototype.placePhotos = function() {
-  if(Map.photos) {
+  if(Map.photos && Map.photos.length > 0) {
     this.photoMarkers = new OpenLayers.Layer.Markers("Photos");
     this.photoSize = new OpenLayers.Size(24, 24);
     this.photoOffset = new OpenLayers.Pixel(-12, -24);
@@ -170,9 +173,13 @@ OMap.prototype.simplifyByZoom = function() {
 
 OMap.prototype.zoomed = function() {
   this.simplifyByZoom();
+  this.toggleModifiers();
+};
+
+OMap.prototype.toggleModifiers = function() {
   if(Map.edit_mode) {
-    if(this.omap.getNumZoomLevels() - this.omap.getZoom() > 3) {
-      if(this.omap.getLayerIndex(this.modifierMarkers) > -1) {
+    if(this.omap.getNumZoomLevels() - this.omap.getZoom() > 4) {
+      if(this.omap.getLayerIndex(this.modifierMarkers) >= 0) {
         this.omap.removeLayer(this.modifierMarkers);
       }
     } else {
