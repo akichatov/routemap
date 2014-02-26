@@ -9,7 +9,7 @@
 <div id="info">
   <h3><%= (@track || @tag).name %></h3>
   <table id="track_statistic">
-    <%- if @track && @track.tags.any? -%>
+    <%- if @track && @track.tags.any? && @track.user == current_user -%>
       <tr>
         <td colspan="2">
           <%- @track.tags.each do |tag| -%>
