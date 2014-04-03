@@ -1,6 +1,7 @@
-<%= javascript "http://www.openlayers.org/api/OpenLayers.js" %>
+<%= javascript 'OpenLayers' %>
+
 <%= javascript "http://maps.googleapis.com/maps/api/js?key=#{MapApiKeys::GOOGLE}&sensor=false" %>
-<%= javascript "http://api-maps.yandex.ru/2.0-stable/?load=package.full&coordorder=longlat&lang=ru-RU" %>
+<%#= javascript "http://api-maps.yandex.ru/2.0-stable/?load=package.full&coordorder=longlat&lang=ru-RU" %>
 <%= javascript 'map.js' %>
 <%= javascript track_path(@track, format: :js) if @track %>
 <%= javascript track_photos_path(@track, format: :js) if @track %>

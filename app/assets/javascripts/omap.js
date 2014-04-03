@@ -25,7 +25,7 @@ var OMap = function(options, map) {
     });
     this.omap.addLayer(googleMap);
   }
-  ymaps.ready($.proxy(this.addYandex, this));
+  // ymaps.ready($.proxy(this.addYandex, this));
   
   var bingRoad = new OpenLayers.Layer.Bing({
     name: "Bing Road",
