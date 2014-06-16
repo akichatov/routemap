@@ -67,7 +67,7 @@ private
   end
 
   def find_tags
-    @tags = current_user.tags
+    @tags = current_user.tags.order(:name)
   end
 
   def find_per_page

@@ -68,7 +68,7 @@ private
   def update_tag
     self.tags = @tag_name.split(',').map do |name|
       user.tags.find_or_create_by_name(name.strip) if name.present?
-    end.compact if @tag_name.present?
+    end.compact unless @tag_name.nil?
   end
 
 end
