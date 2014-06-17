@@ -10,6 +10,7 @@ en:
       new_track: Upload
       edit_track: Edit
       edit_group: Edit Group
+      delete_group: Delete Group
       delete_track: Delete
 
     units:

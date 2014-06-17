@@ -2,7 +2,7 @@ class TagsController < ApplicationController
   before_filter :authenticate_user!, except: [:show]
 
   before_filter :find_tags, only: :show
-  before_filter :find_tag, only: [:edit, :update]
+  before_filter :find_tag, only: [:edit, :update, :destroy]
 
   def update
     if @tag.update_attributes(params[:tag])
@@ -10,6 +10,11 @@ class TagsController < ApplicationController
     else
       render :edit
     end
+  end
+
+  def destroy
+    @tag.destroy
+    redirect_to tracks_path
   end
 
   private

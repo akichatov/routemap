@@ -22,6 +22,9 @@
           <div class="menu_item">
             <%= link_to t('views.menu.edit_group'), edit_tag_path(@tag) %>
           </div>
+          <div class="menu_item">
+            <%= link_to t('views.menu.delete_group'), tag_path(@tag), method: :delete, confirm: 'Are you sure?' %>
+          </div>
         <%- end -%>
         <%- if @track && !@track.new_record? && @track.user == current_user -%>
           <div class="menu_item">
