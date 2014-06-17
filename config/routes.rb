@@ -11,7 +11,7 @@ Routemap::Application.routes.draw do
     resources :partitions, only: [:new, :create]
     resources :photos, only: :index
   end
-  resources :tags, only: :show do
+  resources :tags, only: [:show, :edit, :update] do
     resources :tracks
     resources :photos, only: :index
   end

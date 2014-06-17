@@ -6,4 +6,6 @@ class Tag < ActiveRecord::Base
   has_many :tracks, through: :tags_tracks, include: :version
   has_many :photos
 
+  attr_accessible :name
+
 end

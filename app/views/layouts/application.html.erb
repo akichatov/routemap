@@ -18,6 +18,11 @@
         <div class="menu_item">
           <%= link_to t('views.menu.new_track'), new_track_path %>
         </div>
+        <%- if @tag && @tag.persisted? && @tag.user == current_user -%>
+          <div class="menu_item">
+            <%= link_to t('views.menu.edit_group'), edit_tag_path(@tag) %>
+          </div>
+        <%- end -%>
         <%- if @track && !@track.new_record? && @track.user == current_user -%>
           <div class="menu_item">
             <%= link_to t('views.menu.edit_track'), edit_track_path(@track) %>

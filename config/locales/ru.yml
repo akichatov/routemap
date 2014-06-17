@@ -9,6 +9,7 @@ ru:
       tracks: Треки
       new_track: Загрузить
       edit_track: Редактировать
+      edit_group: Редактировать Группу
       delete_track: Удалить
 
     units:
